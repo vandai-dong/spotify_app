@@ -1,202 +1,61 @@
-{% load static %}
+{% extends "base.html" %} {% load static %} {% block styleSheet %}
+<link rel="stylesheet" href="{% static 'css/download_app.css' %}" />
+{% endblock %} {% block content %}
+<br />
+<br />
 
-<html>
-  <head>
-    <title>Spotify - Music for everyone</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link
-      rel="icon"
-      type="image/png"
-      href="https://cdn3.emoji.gg/emojis/SpotifyLogo.png"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <link rel="stylesheet" href="{% static 'css/download_app.css' %}" />
-  </head>
+<h1>Download Spotify</h1>
 
-  <body>
-    <div class="container-fluid" style="margin-top: 10px">
-      <div class="row">
-        <div class="col-md-3">
-          <a href="{% url 'dashboard' %}">
-            <img
-              src="{% static 'img/spotify_logo.jpg' %}"
-              id="logo"
-              alt="Spotify Logo"
-              width="60px"
-            />
-          </a>
-        </div>
+<ul>
+  <li>
+    Mac OS X (<a href="https://www.spotify.com/au/download/mac/" target="_blank"
+      >Current</a
+    >
+    | <a href="" target="_blank">10.15</a> |
+    <a href="" target="_blank">10.14</a> |
+    <a href="" target="_blank">10.13</a> |
+    <a href="" target="_blank">10.12</a> | <a href="" target="_blank">10.11</a>)
+  </li>
+  <li>
+    Windows (<a
+      href="https://www.spotify.com/au/download/windows/"
+      target="_blank"
+      >Current</a
+    >
+    | <a href="" target="_blank">10 (32-bit)</a> |
+    <a href="" target="_blank">8.1</a> | <a href="" target="_blank">8</a> |
+    <a href="" target="_blank">7</a>)
+  </li>
+  <li>
+    <a
+      href="https://apps.apple.com/us/app/spotify-music-and-podcasts/id324684580"
+      target="_blank"
+      >iOS</a
+    >
+  </li>
+  <li>
+    Android (
+    <a
+      href="https://play.google.com/store/apps/details?id=com.spotify.music&hl=en&pli=1"
+      target="_blank"
+      >Google Play</a
+    >
+    |
+    <a href="https://www.amazon.com/Spotify-Music/dp/B00KLBR6IC" target="_blank"
+      >Amazon</a
+    >
+    )
+  </li>
+</ul>
 
-        <div class="col-auto">
-          <div class="circle">
-            <a href="{% url 'dashboard' %}">
-              <i class="fas fa-home"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="col">
-          <input
-            type="text"
-            placeholder="What do you want to play?"
-            style="
-              border-radius: 50px;
-              padding: 10px;
-              width: 500px;
-              background-color: rgb(58, 57, 57);
-              border: 1px solid #bbb;
-              color: white;
-            "
-          />
-        </div>
-
-        <div class="col-auto">
-          <a href="" class="text-white">
-            <div class="circle">
-              <i class="fa-solid fa-download"></i>
-            </div>
-          </a>
-        </div>
-
-        <div class="col-auto">
-          <a href="{% url 'notification' %}">
-            <div class="circle">
-              <i class="fa-regular fa-bell"></i>
-            </div>
-          </a>
-        </div>
-
-        <div class="col-auto">
-          <a href="{% url 'login' %}">
-            <div class="circle">
-              <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            </div>
-          </a>
-        </div>
-        <!--Link to download: https://www.spotify.com/au/download/other/ -->
-      </div>
-
-      <div class="row border border-dark">
-        <div
-          class="col-md-3 border-end border-dark"
-          style="color: white; background-color: #131212"
-        >
-          <div class="border border-dark p-3 mb-3 rounded">
-            <b
-              ><i class="fa-regular fa-user"></i> &nbsp; &nbsp; &nbsp; Welcome,
-              {{ display_name }}</b
-            >
-          </div>
-
-          <div class="border border-dark p-3 mb-3 rounded">
-            <div class="mb-2">
-              <a href="{% url 'your_library' %}">
-                <b>
-                  <i class="fa-solid fa-music text-white"></i> &nbsp; &nbsp; &nbsp;
-                  <span class="text-white">Your Library</span></b>
-              </a>
-            </div>
-
-            <div>
-              <a href="{% url 'like_song' %}"">
-                <b
-                  ><i class="fa-regular fa-heart text-white"></i> &nbsp; &nbsp; &nbsp;
-                  <span class="text-white">Liked Songs</span>
-                  </b
-                >
-              </a>
-            </div>
-          </div>
-
-          <div class="border border-dark p-3 rounded">
-            <a href="{% url 'chatbot' %}" style="color: white">
-              <b
-                ><i class="fa-regular fa-circle-question"></i> &nbsp; &nbsp;
-                &nbsp; Ask Me</b
-              >
-            </a>
-          </div>
-        </div>
-
-        <div
-          class="col-md-9"
-          id="download"
-          style="color: white; background-color: #131212"
-        >
-          <br />
-          <br />
-
-          <h1>Download Spotify</h1>
-
-          <ul>
-            <li>
-              Mac OS X (<a
-                href="https://www.spotify.com/au/download/mac/"
-                target="_blank"
-                >Current</a
-              >
-              | <a href="" target="_blank">10.15</a> |
-              <a href="" target="_blank">10.14</a> |
-              <a href="" target="_blank">10.13</a> |
-              <a href="" target="_blank">10.12</a> |
-              <a href="" target="_blank">10.11</a>)
-            </li>
-            <li>
-              Windows (<a
-                href="https://www.spotify.com/au/download/windows/"
-                target="_blank"
-                >Current</a
-              >
-              | <a href="" target="_blank">10 (32-bit)</a> |
-              <a href="" target="_blank">8.1</a> |
-              <a href="" target="_blank">8</a> |
-              <a href="" target="_blank">7</a>)
-            </li>
-            <li>
-              <a
-                href="https://apps.apple.com/us/app/spotify-music-and-podcasts/id324684580"
-                target="_blank"
-                >iOS</a
-              >
-            </li>
-            <li>
-              Android (
-              <a
-                href="https://play.google.com/store/apps/details?id=com.spotify.music&hl=en&pli=1"
-                target="_blank"
-                >Google Play</a
-              >
-              |
-              <a
-                href="https://www.amazon.com/Spotify-Music/dp/B00KLBR6IC"
-                target="_blank"
-                >Amazon</a
-              >
-              )
-            </li>
-          </ul>
-
-          <br />
-          <br />
-          <h1>Spotify for other platforms</h1>
-          <ul>
-            <li>
-              <a
-                href="https://www.spotify.com/au/download/linux/"
-                target="_blank"
-                >Linux</a
-              >
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </body>
-</html>
+<br />
+<br />
+<h1>Spotify for other platforms</h1>
+<ul>
+  <li>
+    <a href="https://www.spotify.com/au/download/linux/" target="_blank"
+      >Linux</a
+    >
+  </li>
+</ul>
+{% endblock %}
