@@ -1,15 +1,16 @@
 import logging
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
 from apps.catalog.helpers import mark_liked, user_playlists
 
-from . import chat, services
+from . import chat, playlist_builder, services
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +20,8 @@ def chatbot(request):
     return render(request, 'assistant/chatbot.html')
 
 
-def _rate_limited(user_id):
-    key = f'chatbot-rate:{user_id}'
+def _rate_limited(user_id, scope='chatbot'):
+    key = f'{scope}-rate:{user_id}'
     cache.add(key, 0, timeout=60)
     return cache.incr(key) > settings.CHATBOT_RATE_LIMIT_PER_MINUTE
 
@@ -52,3 +53,25 @@ def get_openai_answer(request):
         ],
         'playlists': [{'id': p.pk, 'name': p.name} for p in user_playlists(request.user)] if songs else [],
     })
+
+
+@login_required
+@require_POST
+def build_playlist(request):
+    prompt = request.POST.get('prompt', '').strip()
+    if not prompt:
+        messages.error(request, 'Describe the playlist you want first.')
+        return redirect('chatbot')
+    if len(prompt) > settings.CHATBOT_MAX_PROMPT_CHARS:
+        messages.error(request, 'That description is too long.')
+        return redirect('chatbot')
+    if _rate_limited(request.user.pk, scope='ai-playlist'):
+        messages.error(request, 'Too many requests. Please wait a minute.')
+        return redirect('chatbot')
+    try:
+        playlist = playlist_builder.create_playlist(request.user, prompt)
+    except playlist_builder.PlaylistBuildError as exc:
+        messages.error(request, str(exc))
+        return redirect('chatbot')
+    messages.success(request, f'Created “{playlist.name}”.')
+    return redirect('playlist_detail', playlist_id=playlist.pk)
