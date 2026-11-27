@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ playlist.name }} - Spotify{% endblock %}
+{% block content %}
+<br />
+<a href="{% url 'your_library' %}">&larr; Your Library</a>
+<h2 class="mt-3">{{ playlist.name }}</h2>
+<p class="text-secondary">{{ playlist.tag }}{% if playlist.description %} · {{ playlist.description }}{% endif %}</p>
+
+<form action="{% url 'playlist_update' playlist.pk %}" method="post" class="row g-2 mb-3">
+  {% csrf_token %}
+  <div class="col-md-4"><input type="text" name="name" value="{{ playlist.name }}" class="form-control" required maxlength="255" aria-label="Playlist name" /></div>
+  <div class="col-md-5"><input type="text" name="description" value="{{ playlist.description }}" class="form-control" placeholder="Description" aria-label="Description" /></div>
+  <div class="col-auto"><button type="submit" class="btn btn-outline-light btn-sm">Rename</button></div>
+</form>
+<form action="{% url 'playlist_delete' playlist.pk %}" method="post" onsubmit="return confirm('Delete this playlist?')" class="mb-4">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-outline-danger btn-sm">Delete playlist</button>
+</form>
+
+{% for entry in entries %}
+<div class="row song-row align-items-center">
+  <div class="col-1">{{ forloop.counter }}</div>
+  <div class="col-5">{{ entry.song.display_title }}</div>
+  <div class="col-4 text-secondary">{{ entry.song.artist_names }}</div>
+  <div class="col-2 text-end">
+    <form action="{% url 'playlist_remove_song' playlist.pk entry.song.pk %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="icon-button" aria-label="Remove {{ entry.song.track_name }}"><i class="fa-solid fa-xmark"></i></button>
+    </form>
+  </div>
+</div>
+{% empty %}
+<p class="text-secondary">This playlist is empty. Use the search bar and the <i class="fa-solid fa-plus"></i> button to add songs.</p>
+{% endfor %}
+{% endblock %}

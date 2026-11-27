@@ -1,0 +1,64 @@
+/* Shared styles for the logged-in app shell */
+body { background-color: black; }
+a { text-decoration: none; }
+
+.circle {
+    width: 50px;
+    height: 50px;
+    background-color: #3f3d3d;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.circle i { font-size: 20px; color: white; }
+button.circle-button { background: none; border: 0; padding: 0; }
+
+.shell-sidebar, .shell-main { color: white; background-color: #131212; }
+.shell-main a:not(.btn) { color: #1db954; }
+.shell-main { min-height: 100vh; padding-bottom: 2rem; }
+.search-input {
+    border-radius: 50px;
+    padding: 10px 16px;
+    width: 100%;
+    max-width: 500px;
+    background-color: rgb(58, 57, 57);
+    border: 1px solid #bbb;
+    color: white;
+}
+
+.scroll-container {
+    display: flex;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scroll-container::-webkit-scrollbar { display: none; }
+.media-card { width: 180px; flex: 0 0 auto; }
+.media-card img { width: 150px; height: 150px; object-fit: cover; }
+.media-card .media-title { white-space: normal; font-size: 15px; margin-top: 8px; }
+
+.song-row { padding: 10px; border-radius: 5px; transition: background-color 0.2s ease-in-out; }
+.song-row:hover { background-color: #2a2a2a; }
+.song-row form { display: inline; }
+.icon-button { background: none; border: 0; color: #b3b3b3; padding: 0 6px; }
+.icon-button:hover, .icon-button.active { color: #1db954; }
+
+.pill {
+    border-radius: 25px;
+    padding: 4px 18px;
+    background: #2a2a2a;
+    color: white;
+    border: 0;
+    display: inline-block;
+}
+.pill.active, .pill:hover { background: white; color: black !important; }
+
+.panel-body#chat { height: 400px; overflow-y: auto; background-color: #f9f9f9; border-radius: 5px; color: #333; }
+#chat .list-group-item { background-color: #f9f9f9; border: none; }
+.input-group input#userInput { background-color: #f9f9f9; color: #333; border: none; }
+
+#download a { color: #1DB954; text-decoration: underline; }

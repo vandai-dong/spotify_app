@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Search - Spotify{% endblock %}
+{% block content %}
+<br />
+{% if not query %}
+  <h4>Search</h4>
+  <p class="text-secondary">Type a song or artist in the search bar above.</p>
+{% else %}
+  <h4>Results for “{{ query }}”</h4>
+
+  <h5 class="mt-4">Songs</h5>
+  {% for song in songs %}
+    {% include "partials/_song_row.html" %}
+  {% empty %}
+    <p class="text-secondary">No songs found.</p>
+  {% endfor %}
+
+  <h5 class="mt-4">Artists</h5>
+  <ul class="list-unstyled">
+    {% for artist in artists %}
+    <li class="py-1">{{ artist.artist }} <span class="text-secondary">· {{ artist.num_of_followers|floatformat:"0g" }} followers</span></li>
+    {% empty %}
+    <li class="text-secondary">No artists found.</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endblock %}

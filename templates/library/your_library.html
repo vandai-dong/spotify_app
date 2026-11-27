@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Your Library - Spotify{% endblock %}
+{% block content %}
+<br />
+<h3>Your Library</h3>
+<div class="my-3">
+  <a href="{% url 'your_library' %}" class="pill {% if not tag %}active{% endif %}">All</a>
+  {% for value, label in tag_choices %}
+  <a href="{% url 'your_library' %}?tag={{ value }}" class="pill {% if tag == value %}active{% endif %}">{{ label }}s</a>
+  {% endfor %}
+</div>
+
+<form action="{% url 'playlist_create' %}" method="post" class="row g-2 mb-4">
+  {% csrf_token %}
+  <div class="col-md-5"><input type="text" name="name" class="form-control" placeholder="New playlist name" required maxlength="255" /></div>
+  <div class="col-md-3">
+    <select name="tag" class="form-select">
+      {% for value, label in tag_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2"><button type="submit" class="btn btn-success">Create</button></div>
+</form>
+
+{% for playlist in playlists %}
+<a href="{% url 'playlist_detail' playlist.pk %}" class="d-block song-row text-white">
+  <b>{{ playlist.name }}</b>
+  <span class="text-secondary">· {{ playlist.tag }} · {{ playlist.playlist_songs.count }} song{{ playlist.playlist_songs.count|pluralize }}</span>
+</a>
+{% empty %}
+<p class="text-secondary">Nothing here yet. Create a playlist above, then add songs from search.</p>
+{% endfor %}
+{% endblock %}

@@ -1,98 +1,75 @@
 # Spotify Simulation App
 
-This is a Django-based web application that simulates core functionalities of Spotify, allowing users to browse songs, create playlists, and stream music. The project demonstrates the integration of backend logic with a responsive frontend, handling user authentication, playlist management, and song playback.
+A Django web app that simulates parts of Spotify: sign-up / login, a dashboard of top artists and songs,
+song search, liked songs, playlists (your library) and an AI chat assistant. It runs on a bundled dataset of
+~1,200 globally popular songs and ~110 artists (2023–2024 weekly charts).
 
-## Features
+> Not affiliated with Spotify. There is no audio playback.
 
-- **User Authentication**: Sign up, log in, and manage user accounts.
-- **Song Library**: Browse through a collection of songs, artists, and albums.
-- **Playlists**: Users can create, edit, and delete their playlists.
-- **Song Playback**: Users can play, pause, and skip tracks within playlists.
-- **Search**: Users can search for songs, artists, and albums.
+## Quick start
 
-## Installation
+Requires Python 3.12+ (developed on 3.14).
 
-### Prerequisites
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements/dev.txt
+cp .env.example .env          # optional: only needed for the chatbot / image fetching
+python manage.py migrate
+python manage.py import_songs
+python manage.py import_artists
+python manage.py createsuperuser   # optional, for /admin
+python manage.py runserver
+```
 
-- Python 3.8 or higher
-- Django 4.0 or higher
-- PostgreSQL (or any database of your choice)
+Open <http://127.0.0.1:8000/>, sign up, and log in with your email (or username).
 
-### Setup Instructions
+The app boots without any API keys. The dashboard shows placeholder covers until you run `fetch_images`;
+the chatbot answers "not configured" until you set `OPENAI_API_KEY`.
 
-1. **Clone the repository:**
+## Configuration (`.env`)
 
-   ```bash
-   git https://github.com/VDai1999/spotify_app.git
-   cd spotify_app
-   ```
+| Variable | Purpose | Default |
+| --- | --- | --- |
+| `DJANGO_SECRET_KEY` | Django secret key — **set a real one outside local dev** | insecure dev key |
+| `DJANGO_DEBUG` | `true` / `false` | `true` |
+| `DJANGO_ALLOWED_HOSTS` | comma-separated hosts | `localhost,127.0.0.1` |
+| `OPENAI_API_KEY`, `OPENAI_MODEL` | chat assistant | unset, `gpt-4o-mini` |
+| `SPOTIFY_CLIENT_ID`, `SPOTIFY_SECRET_KEY` | only for `fetch_images` | unset |
+| `DJANGO_EMAIL_BACKEND` | password-reset email; prints to the console by default | console |
 
-2. **Create a virtual environment:**
+With `DJANGO_DEBUG=false`, also run `python manage.py collectstatic` (WhiteNoise serves `staticfiles/`).
 
-   ```bash
-   python3 -m venv env
-   source env/bin/activate  # On Windows, use `env\Scripts\activate`
-   ```
+## Management commands
 
-3. **Install Python dependencies:**
+- `import_songs [csv]`, `import_artists [csv]` — load the bundled CSVs (idempotent; safe to re-run).
+- `fetch_images [--force] [--limit N]` — cache artist/album image URLs from the Spotify Web API in the database
+  (requires Spotify credentials). The web app itself never calls Spotify.
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Project layout
 
-4. **Set up the database:**
+```
+config/            settings, root URLs, wsgi/asgi
+apps/accounts/     User model (email-or-username login), sign-up, password reset
+apps/catalog/      Song, Artist, dashboard, search, import/fetch commands
+apps/library/      Playlists, playlist songs, liked songs
+apps/assistant/    OpenAI-backed chat assistant (login required, rate limited)
+templates/         base.html + shared partials; per-app templates
+static/            CSS / JS / images
+data/              bundled CSV datasets
+scripts/ingestion/ offline crawling tools and notebook (not part of the web app)
+```
 
-   Update `settings.py` with your database configuration. Example for PostgreSQL:
+## Development
 
-   ```python
-   DATABASES = {
-       'default': {
-           'ENGINE': 'django.db.backends.postgresql',
-           'NAME': 'spotify_db',
-           'USER': 'your_db_user',
-           'PASSWORD': 'your_password',
-           'HOST': 'localhost',
-           'PORT': '5432',
-       }
-   }
-   ```
+```bash
+pytest                         # test suite
+ruff check .                   # lint
+python manage.py makemigrations --check --dry-run
+```
 
-   Then, run migrations:
+CI (GitHub Actions) runs the same checks on every push.
 
-   ```bash
-   python manage.py migrate
-   ```
-
-5. **Create a superuser (admin account):**
-
-   ```bash
-   python manage.py createsuperuser
-   ```
-
-6. **Run the development server:**
-
-   ```bash
-   python manage.py runserver
-   ```
-
-   The application should now be running at `http://127.0.0.1:8000/`.
-
-## Usage
-
-- **Home Page**: The landing page displays featured playlists and recently added songs.
-- **User Authentication**: You can sign up or log in from the navigation bar.
-- **Library**: Browse all available songs, artists, and albums.
-- **Playlist Creation**: Once logged in, you can create your own playlists and add songs.
-- **Playback**: Play songs directly from the playlist page with basic controls (play, pause, skip).
-- **Search**: Use the search bar to look for specific songs, albums, or artists.
-
-## Technologies Used
-
-- **Backend**: Django (Python)
-- **Frontend**: HTML, CSS, Bootstrap
-- **Database**: PostgreSQL (or another Django-compatible database)
-- **Authentication**: Django's built-in authentication system
-
-## References
+## Data sources
 
 1. Artist dataset: [Spotify Artist Metadata Top 10k](https://www.kaggle.com/datasets/jackharding/spotify-artist-metadata-top-10k)
+2. Weekly global top-songs charts from [charts.spotify.com](https://charts.spotify.com/charts/view/regional-global-weekly/latest), enriched via the Spotify Web API.

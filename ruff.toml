@@ -1,0 +1,7 @@
+target-version = "py312"
+line-length = 130
+extend-exclude = ["scripts/ingestion/*.ipynb", "**/migrations"]
+
+[lint]
+select = ["E", "F", "I", "B", "UP", "DJ"]
+ignore = ["DJ001"]  # phone_number is an existing nullable CharField

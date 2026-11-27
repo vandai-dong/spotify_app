@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Liked Songs - Spotify{% endblock %}
+{% block content %}
+<div class="row mt-3">
+  <div class="col-3">
+    <img src="{% static 'img/like_song.png' %}" alt="Liked songs" width="70%" />
+  </div>
+  <div class="col-9" style="margin-top: 2%">
+    <span>Playlist</span>
+    <h1 class="mt-4">Liked Songs</h1>
+    <span>{{ request.user.display_name }} &#x2022; {{ favorite_count_text }}</span>
+  </div>
+</div>
+
+{% if favorites %}
+<div class="row" style="margin-top: 5%">
+  <div class="col-1">#</div>
+  <div class="col-7">Title</div>
+  <div class="col-3">Date added</div>
+</div>
+<hr />
+{% for favorite in favorites %}
+<div class="row song-row align-items-center">
+  <div class="col-1">{{ forloop.counter }}</div>
+  <div class="col-7">{{ favorite.song.display_title }} <span class="text-secondary">· {{ favorite.song.artist_names }}</span></div>
+  <div class="col-3">{{ favorite.added_at|date:"Y-m-d" }}</div>
+  <div class="col-1 text-end">
+    <form action="{% url 'toggle_favorite' favorite.song.pk %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="icon-button active" aria-label="Unlike {{ favorite.song.track_name }}">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+    </form>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="mt-5 text-center">
+  <h2>&#127925;</h2>
+  <h2>Songs you like will appear here</h2>
+  <p class="text-secondary">Use the search bar to find songs and tap the heart.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,5 @@
+-r base.txt
+pandas>=2.2
+requests>=2.32
+spotipy>=2.22
+tqdm>=4.66

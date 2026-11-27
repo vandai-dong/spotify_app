@@ -1,5 +1,11 @@
 venv
+.venv/
 .env
 .cache
 db.sqlite3
-spotify/__pycache__
+__pycache__/
+*.pyc
+.DS_Store
+staticfiles/
+.pytest_cache/
+.ruff_cache/
