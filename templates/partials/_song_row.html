@@ -1,6 +1,6 @@
 {# Expects: song (with .liked set by the view) and optionally playlists (user's playlists) #}
 <div class="row song-row align-items-center">
-  <div class="col-1">{{ forloop.counter }}</div>
+  <div class="col-1">{{ song.rank|default:forloop.counter }}</div>
   <div class="col-5"><a href="{% url 'song_detail' song.pk %}" class="text-white">{{ song.display_title }}</a></div>
   <div class="col-4 text-secondary">{{ song.artist_names }}</div>
   <div class="col-2 text-end">

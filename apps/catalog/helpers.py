@@ -1,3 +1,5 @@
+from django.core.paginator import Paginator
+
 from apps.library.models import FavoriteSong, Playlist
 
 
@@ -14,3 +16,14 @@ def mark_liked(user, songs):
 
 def user_playlists(user):
     return Playlist.objects.filter(user=user)
+
+
+def paginate(request, queryset, per_page=25):
+    """Paginate using ?page=; invalid/out-of-range pages clamp instead of erroring.
+
+    Returns (page_obj, querystring) where querystring keeps the other GET params for page links.
+    """
+    page_obj = Paginator(queryset, per_page).get_page(request.GET.get('page'))
+    params = request.GET.copy()
+    params.pop('page', None)
+    return page_obj, params.urlencode()

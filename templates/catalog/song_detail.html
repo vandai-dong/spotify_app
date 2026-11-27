@@ -15,7 +15,7 @@
       {% else %}{{ song.artist_names }}{% endif %}
       <span class="text-secondary">· {{ duration }} · {{ song.get_mode_display }} · {{ song.tempo|floatformat:0 }} BPM</span>
     </p>
-    <p>{% for genre in song.genres.all|slice:":8" %}<span class="pill me-1">{{ genre.name }}</span>{% endfor %}</p>
+    <p>{% for genre in song.genres.all|slice:":8" %}<a href="{% url 'browse' %}?genre={{ genre.name|urlencode }}" class="pill me-1">{{ genre.name }}</a>{% endfor %}</p>
     <form action="{% url 'toggle_favorite' song.pk %}" method="post" class="d-inline">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ request.get_full_path }}" />
@@ -56,4 +56,11 @@
   {% endfor %}
 </div>
 <p class="text-secondary mt-3">Popularity {{ song.track_pop }}/100 · Loudness {{ song.loudness|floatformat:1 }} dB</p>
+
+{% if similar %}
+<h5 class="mt-5">More like this</h5>
+{% for song in similar %}
+  {% include "partials/_song_row.html" %}
+{% endfor %}
+{% endif %}
 {% endblock %}

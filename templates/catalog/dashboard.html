@@ -2,6 +2,19 @@
 {% load static %}
 {% block content %}
 <br />
+<h4>{% if for_you_personalized %}Made for you{% else %}Popular right now{% endif %}</h4>
+{% if not for_you_personalized and for_you %}<p class="text-secondary small px-2">Like a few songs and this row will adapt to your taste.</p>{% endif %}
+<div class="scroll-container p-2">
+  {% for song in for_you %}
+  <a href="{% url 'song_detail' song.pk %}" class="p-3 media-card text-center text-white">
+    <img src="{% if song.song_img_url %}{{ song.song_img_url }}{% else %}{% static 'img/placeholder.svg' %}{% endif %}"
+         alt="{{ song.track_name }}" class="rounded-circle" />
+    <div class="media-title">{{ song.display_title }}</div>
+  </a>
+  {% endfor %}
+</div>
+
+<br />
 <h4>Top Artists</h4>
 <div class="scroll-container p-2">
   {% for artist in top_artists %}
