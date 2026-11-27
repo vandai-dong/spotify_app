@@ -6,7 +6,7 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spotify_app.settings")
 django.setup()
 
-from models import Song
+from spotify.models import Song
 
 if __name__ == "__main__":
     ## Read the file
@@ -34,7 +34,7 @@ if __name__ == "__main__":
             energy=row['energy'],
             instrumentalness=row['instrumentalness'],
             liveness=row['liveness'],
-            loudness=row['liveness'],
+            loudness=row['loudness'],
             mode=row['mode'],
             speechiness=row['speechiness'],
             tempo=row['tempo'],

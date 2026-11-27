@@ -29,19 +29,35 @@ from .models import User, Song, Artist, FavoriteSong
 # Load keys from .env file
 load_dotenv() 
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(
-  api_key=openai_api_key,
-)
+_openai_client = None
+_spotify_client = None
 
-# Spotify API Credentials
-client_id = os.getenv("SPOTIFY_CLIENT_ID")
-client_secret = os.getenv("SPOTIFY_SECRET_KEY")
 
-# Initialize Spotipy client
-client_credentials_manager = SpotifyClientCredentials(client_id=client_id,
-                                                      client_secret=client_secret)
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+def get_openai_client():
+    """Create the OpenAI client on first use so the app boots without keys."""
+    global _openai_client
+    if _openai_client is None:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENAI_API_KEY is not set")
+        _openai_client = OpenAI(api_key=api_key)
+    return _openai_client
+
+
+def get_spotify_client():
+    """Create the Spotify client on first use so the app boots without keys."""
+    global _spotify_client
+    if _spotify_client is None:
+        client_id = os.getenv("SPOTIFY_CLIENT_ID")
+        client_secret = os.getenv("SPOTIFY_SECRET_KEY")
+        if not (client_id and client_secret):
+            raise RuntimeError("SPOTIFY_CLIENT_ID / SPOTIFY_SECRET_KEY are not set")
+        _spotify_client = spotipy.Spotify(
+            client_credentials_manager=SpotifyClientCredentials(
+                client_id=client_id, client_secret=client_secret
+            )
+        )
+    return _spotify_client
 
 
 # Create your views here.
@@ -202,7 +218,7 @@ def get_openai_answer(request):
         prompt = request.POST.get("userInput")
 
         try:
-            response = client.chat.completions.create(
+            response = get_openai_client().chat.completions.create(
                 model = "gpt-3.5-turbo",
                 messages=[{"role": "user", "content": prompt}],
                 stream=False,
@@ -248,7 +264,7 @@ def crawl_artist_img_urls():
     # Crawl artists' profile picture from Spotify
     profile_data = {}
     for artist in random_top_artist_uris:
-        profile_url = sp.artist(artist[1])['images'][0]['url']
+        profile_url = get_spotify_client().artist(artist[1])['images'][0]['url']
         profile_data[artist[0]] = profile_url
 
     return profile_data
@@ -261,7 +277,7 @@ def crawl_song_img_urls():
     # Crawl artists' profile picture from Spotify
     profile_data = {}
     for song in random_top_song_uris:
-        profile_url = sp.track(song[1])['album']['images'][0]['url']
+        profile_url = get_spotify_client().track(song[1])['album']['images'][0]['url']
         profile_data[song[0]] = profile_url
 
     # Remove text starting with "(" from the profile_data dictionary keys
