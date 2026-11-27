@@ -1,0 +1,35 @@
+{# Expects: song (with .liked set by the view) and optionally playlists (user's playlists) #}
+<div class="row song-row align-items-center">
+  <div class="col-1">{{ forloop.counter }}</div>
+  <div class="col-5">{{ song.display_title }}</div>
+  <div class="col-4 text-secondary">{{ song.artist_names }}</div>
+  <div class="col-2 text-end">
+    {% if playlists %}
+    <div class="dropdown d-inline">
+      <button class="icon-button" data-bs-toggle="dropdown" aria-label="Add {{ song.track_name }} to a playlist" type="button">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-dark">
+        {% for playlist in playlists %}
+        <li>
+          <form action="{% url 'playlist_add_song' playlist.pk %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="song_id" value="{{ song.pk }}" />
+            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+            <button class="dropdown-item" type="submit">{{ playlist.name }}</button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    <form action="{% url 'toggle_favorite' song.pk %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+      <button type="submit" class="icon-button{% if song.liked %} active{% endif %}"
+              aria-label="{% if song.liked %}Unlike{% else %}Like{% endif %} {{ song.track_name }}">
+        <i class="{% if song.liked %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+      </button>
+    </form>
+  </div>
+</div>

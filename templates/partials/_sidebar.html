@@ -1,0 +1,24 @@
+<div class="col-md-3 border-end border-dark shell-sidebar">
+  <div class="border border-dark p-3 mb-3 rounded">
+    <b><i class="fa-regular fa-user"></i> &nbsp; Welcome, {{ request.user.display_name }}</b>
+  </div>
+
+  <div class="border border-dark p-3 mb-3 rounded">
+    <div class="mb-2">
+      <a href="{% url 'your_library' %}" class="text-white">
+        <b><i class="fa-solid fa-music"></i> &nbsp; Your Library</b>
+      </a>
+    </div>
+    <div>
+      <a href="{% url 'like_song' %}" class="text-white">
+        <b><i class="fa-regular fa-heart"></i> &nbsp; Liked Songs</b>
+      </a>
+    </div>
+  </div>
+
+  <div class="border border-dark p-3 rounded">
+    <a href="{% url 'chatbot' %}" class="text-white">
+      <b><i class="fa-regular fa-circle-question"></i> &nbsp; Ask Me</b>
+    </a>
+  </div>
+</div>
