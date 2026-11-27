@@ -3,6 +3,16 @@ import re
 from django.db import models
 
 
+class Genre(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class Artist(models.Model):
     artist = models.CharField(max_length=255)
     uri = models.CharField(max_length=100, unique=True)
@@ -40,6 +50,10 @@ class Song(models.Model):
     artist_genres = models.JSONField(default=list)
     track_pop = models.IntegerField()
     song_img_url = models.URLField(max_length=500, blank=True)
+    genres = models.ManyToManyField(Genre, related_name='songs', blank=True)
+    primary_artist = models.ForeignKey(
+        Artist, null=True, blank=True, on_delete=models.SET_NULL, related_name='songs',
+    )
 
     class Meta:
         ordering = ['-track_pop', 'track_name']

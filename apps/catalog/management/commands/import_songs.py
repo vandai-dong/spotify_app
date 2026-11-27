@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 from apps.catalog.models import Song
+from apps.catalog.services.linking import link_catalog
 
 DEFAULT_CSV = Path(settings.BASE_DIR) / "data/processed_global_top_songs/full_data.csv"
 FLOAT_FIELDS = [
@@ -51,3 +52,8 @@ class Command(BaseCommand):
         # ignore_conflicts makes re-running the import idempotent (uri is unique).
         Song.objects.bulk_create(songs, ignore_conflicts=True)
         self.stdout.write(self.style.SUCCESS(f"Imported {len(songs)} songs ({Song.objects.count()} in DB)"))
+
+        artists_created, genres_created = link_catalog()
+        self.stdout.write(self.style.SUCCESS(
+            f"Linked songs to artists and genres (+{artists_created} artists, +{genres_created} genres)"
+        ))

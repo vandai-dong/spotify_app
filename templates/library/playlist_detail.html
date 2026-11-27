@@ -20,7 +20,7 @@
 {% for entry in entries %}
 <div class="row song-row align-items-center">
   <div class="col-1">{{ forloop.counter }}</div>
-  <div class="col-5">{{ entry.song.display_title }}</div>
+  <div class="col-5"><a href="{% url 'song_detail' entry.song.pk %}" class="text-white">{{ entry.song.display_title }}</a></div>
   <div class="col-4 text-secondary">{{ entry.song.artist_names }}</div>
   <div class="col-2 text-end">
     <form action="{% url 'playlist_remove_song' playlist.pk entry.song.pk %}" method="post">
