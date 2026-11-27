@@ -19,4 +19,7 @@ urlpatterns = [
     path('playlists/<int:playlist_id>/delete', views.playlist_delete, name='playlist_delete'),
     path('playlists/<int:playlist_id>/add', views.playlist_add_song, name='playlist_add_song'),
     path('playlists/<int:playlist_id>/remove/<int:song_id>', views.playlist_remove_song, name='playlist_remove_song'),
+    path('playlists/<int:playlist_id>/move/<int:song_id>', views.playlist_move_song, name='playlist_move_song'),
+    path('playlists/<int:playlist_id>/share', views.playlist_share, name='playlist_share'),
+    path('p/<slug:token>', views.shared_playlist, name='shared_playlist'),
 ]

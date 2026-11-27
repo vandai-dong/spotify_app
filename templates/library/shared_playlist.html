@@ -1,0 +1,35 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>{{ playlist.name }} - Shared playlist</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+  </head>
+  <body>
+    <div class="container py-4 shell-main" style="max-width: 800px; min-height: 0">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        {% include "partials/_playlist_cover.html" with size=120 %}
+        <div>
+          <span class="text-secondary">Shared playlist</span>
+          <h1>{{ playlist.name }}</h1>
+          <p class="text-secondary mb-0">By {{ owner_name }}{% if playlist.description %} · {{ playlist.description }}{% endif %}</p>
+        </div>
+      </div>
+      {% for entry in entries %}
+      <div class="row song-row">
+        <div class="col-1">{{ forloop.counter }}</div>
+        <div class="col-6">{{ entry.song.display_title }}</div>
+        <div class="col-5 text-secondary">{{ entry.song.artist_names }}</div>
+      </div>
+      {% empty %}
+      <p class="text-secondary">This playlist is empty.</p>
+      {% endfor %}
+      <p class="mt-4"><a href="{% url 'login' %}">Log in to build your own playlists</a></p>
+    </div>
+  </body>
+</html>

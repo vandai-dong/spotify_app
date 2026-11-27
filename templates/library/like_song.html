@@ -13,16 +13,16 @@
   </div>
 </div>
 
-{% if favorites %}
+{% if page_obj.paginator.count %}
 <div class="row" style="margin-top: 5%">
   <div class="col-1">#</div>
   <div class="col-7">Title</div>
   <div class="col-3">Date added</div>
 </div>
 <hr />
-{% for favorite in favorites %}
+{% for favorite in page_obj %}
 <div class="row song-row align-items-center">
-  <div class="col-1">{{ forloop.counter }}</div>
+  <div class="col-1">{{ page_obj.start_index|add:forloop.counter0 }}</div>
   <div class="col-7"><a href="{% url 'song_detail' favorite.song.pk %}" class="text-white">{{ favorite.song.display_title }}</a> <span class="text-secondary">· {{ favorite.song.artist_names }}</span></div>
   <div class="col-3">{{ favorite.added_at|date:"Y-m-d" }}</div>
   <div class="col-1 text-end">
@@ -35,6 +35,7 @@
   </div>
 </div>
 {% endfor %}
+{% include "partials/_pagination.html" %}
 {% else %}
 <div class="mt-5 text-center">
   <h2>&#127925;</h2>

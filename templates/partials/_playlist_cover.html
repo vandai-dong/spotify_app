@@ -1,0 +1,7 @@
+{% load static %}
+{# Expects: playlist (with .cover_urls) and optional size (px, default 56) #}
+{% with size=size|default:56 %}
+<div class="playlist-cover" style="width: {{ size }}px; height: {{ size }}px" aria-hidden="true">
+  {% for url in playlist.cover_urls %}<img src="{{ url }}" alt="" loading="lazy" />{% empty %}<div class="cover-empty"><i class="fa-solid fa-music"></i></div>{% endfor %}
+</div>
+{% endwith %}

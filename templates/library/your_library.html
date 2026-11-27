@@ -18,7 +18,7 @@
   <div class="col-md-5"><input type="text" name="name" class="form-control" placeholder="New playlist name" required maxlength="255" /></div>
   <div class="col-md-3">
     <select name="tag" class="form-select">
-      {% for value, label in tag_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+      {% for value, label in tag_choices %}<option value="{{ value }}"{% if value == "Playlist" %} selected{% endif %}>{{ label }}</option>{% endfor %}
     </select>
   </div>
   <div class="col-md-2"><button type="submit" class="btn btn-success">Create</button></div>
@@ -35,12 +35,16 @@
 <p class="text-secondary">You are not following any artists yet. Open an artist page and tap Follow.</p>
 {% endif %}
 
-{% for playlist in playlists %}
-<a href="{% url 'playlist_detail' playlist.pk %}" class="d-block song-row text-white">
-  <b>{{ playlist.name }}</b>
-  <span class="text-secondary">· {{ playlist.tag }} · {{ playlist.playlist_songs.count }} song{{ playlist.playlist_songs.count|pluralize }}</span>
+{% for playlist in page_obj %}
+<a href="{% url 'playlist_detail' playlist.pk %}" class="d-flex align-items-center gap-3 song-row text-white">
+  {% include "partials/_playlist_cover.html" with size=56 %}
+  <div>
+    <b>{{ playlist.name }}</b>
+    <div class="text-secondary small">{{ playlist.tag }} · {{ playlist.song_count }} song{{ playlist.song_count|pluralize }}{% if playlist.share_token %} · <i class="fa-solid fa-link"></i> shared{% endif %}</div>
+  </div>
 </a>
 {% empty %}
 <p class="text-secondary">Nothing here yet. Create a playlist above, then add songs from search.</p>
 {% endfor %}
+{% include "partials/_pagination.html" %}
 {% endblock %}

@@ -10,7 +10,8 @@ from .services import recommend
 from .services.moods import MOODS, get_mood
 
 DASHBOARD_ITEMS = 7
-SEARCH_LIMIT = 50
+SEARCH_LIMIT = 50  # max artist matches
+SEARCH_PAGE_SIZE = 25
 
 
 @login_required
@@ -31,13 +32,19 @@ def dashboard(request):
 @login_required
 def search(request):
     query = request.GET.get('q', '').strip()
-    songs, artists = [], []
+    page_obj, querystring, artists = None, '', []
     if query:
-        songs = Song.objects.filter(Q(track_name__icontains=query) | Q(artist_names__icontains=query))[:SEARCH_LIMIT]
+        songs = Song.objects.filter(Q(track_name__icontains=query) | Q(artist_names__icontains=query))
+        page_obj, querystring = paginate(request, songs, per_page=SEARCH_PAGE_SIZE)
+        page_obj.object_list = mark_liked(request.user, page_obj.object_list)
+        offset = (page_obj.number - 1) * page_obj.paginator.per_page
+        for rank, song in enumerate(page_obj.object_list, start=offset + 1):
+            song.rank = rank
         artists = Artist.objects.filter(artist__icontains=query)[:SEARCH_LIMIT]
     return render(request, 'catalog/search.html', {
         'query': query,
-        'songs': mark_liked(request.user, songs),
+        'page_obj': page_obj,
+        'querystring': querystring,
         'artists': artists,
         'playlists': user_playlists(request.user),
     })
