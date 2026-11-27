@@ -1,4 +1,4 @@
-"""Thin wrapper around the OpenAI client so views stay testable."""
+"""Thin wrapper around the OpenAI client so everything above it stays testable."""
 from django.conf import settings
 
 _client = None
@@ -19,10 +19,13 @@ def get_client():
     return _client
 
 
-def ask(prompt):
+def complete(messages, json_mode=False):
+    """Send chat `messages` to the model and return the reply text."""
+    kwargs = {'response_format': {'type': 'json_object'}} if json_mode else {}
     response = get_client().chat.completions.create(
         model=settings.OPENAI_MODEL,
-        messages=[{'role': 'user', 'content': prompt}],
+        messages=messages,
         max_tokens=1024,
+        **kwargs,
     )
     return response.choices[0].message.content or ''
