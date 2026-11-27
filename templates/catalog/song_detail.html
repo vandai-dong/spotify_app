@@ -16,6 +16,7 @@
       <span class="text-secondary">· {{ duration }} · {{ song.get_mode_display }} · {{ song.tempo|floatformat:0 }} BPM</span>
     </p>
     <p>{% for genre in song.genres.all|slice:":8" %}<a href="{% url 'browse' %}?genre={{ genre.name|urlencode }}" class="pill me-1">{{ genre.name }}</a>{% endfor %}</p>
+    <button type="button" class="btn btn-sm btn-success js-play" data-song="{{ song.pk }}"><i class="fa-solid fa-play"></i> Play</button>
     <form action="{% url 'toggle_favorite' song.pk %}" method="post" class="d-inline">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ request.get_full_path }}" />

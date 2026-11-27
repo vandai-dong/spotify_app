@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Recently played - Spotify{% endblock %}
+{% block content %}
+<br />
+<a href="{% url 'your_library' %}">&larr; Your Library</a>
+<h3 class="mt-3">Recently played</h3>
+<p class="text-secondary small">Playback in this app is simulated; this list records what you pressed play on.</p>
+{% for play in plays %}
+<div class="row song-row align-items-center">
+  <div class="col-6"><a href="{% url 'song_detail' play.song.pk %}" class="text-white">{{ play.song.display_title }}</a></div>
+  <div class="col-4 text-secondary">{{ play.song.artist_names }}</div>
+  <div class="col-2 text-end text-secondary small">{{ play.played_at|date:"M j, H:i" }}</div>
+</div>
+{% empty %}
+<p class="text-secondary">Nothing played yet. Press <i class="fa-solid fa-play"></i> on any song.</p>
+{% endfor %}
+{% endblock %}

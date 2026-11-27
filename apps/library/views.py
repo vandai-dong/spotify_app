@@ -5,9 +5,9 @@ from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
-from apps.catalog.models import Song
+from apps.catalog.models import Artist, Song
 
-from .models import FavoriteSong, Playlist, PlaylistSong
+from .models import FavoriteSong, FollowedArtist, Playlist, PlaylistSong
 
 
 def _redirect_back(request, default):
@@ -40,6 +40,16 @@ def toggle_favorite(request, song_id):
     return _redirect_back(request, 'like_song')
 
 
+@login_required
+@require_POST
+def toggle_follow(request, artist_id):
+    artist = get_object_or_404(Artist, uri=artist_id)
+    follow, created = FollowedArtist.objects.get_or_create(user=request.user, artist=artist)
+    if not created:
+        follow.delete()
+    return _redirect_back(request, reverse('artist_detail', args=[artist.uri]))
+
+
 # --- Playlists -------------------------------------------------------------
 
 @login_required
@@ -50,8 +60,12 @@ def your_library(request):
         playlists = playlists.filter(tag=tag)
     else:
         tag = ''
+    followed = []
+    if tag in ('', Playlist.ARTIST):
+        followed = [f.artist for f in FollowedArtist.objects.filter(user=request.user).select_related('artist')]
     return render(request, 'library/your_library.html', {
         'playlists': playlists,
+        'followed_artists': followed,
         'tag': tag,
         'tag_choices': Playlist.TAG_CHOICES,
     })

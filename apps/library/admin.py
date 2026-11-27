@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import FavoriteSong, Playlist, PlaylistSong
+from .models import FavoriteSong, FollowedArtist, PlayHistory, Playlist, PlaylistSong
 
 
 @admin.register(Playlist)
@@ -18,3 +18,13 @@ class PlaylistSongAdmin(admin.ModelAdmin):
 @admin.register(FavoriteSong)
 class FavoriteSongAdmin(admin.ModelAdmin):
     list_display = ['user', 'song', 'added_at']
+
+
+@admin.register(FollowedArtist)
+class FollowedArtistAdmin(admin.ModelAdmin):
+    list_display = ['user', 'artist', 'followed_at']
+
+
+@admin.register(PlayHistory)
+class PlayHistoryAdmin(admin.ModelAdmin):
+    list_display = ['user', 'song', 'played_at']

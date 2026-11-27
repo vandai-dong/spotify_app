@@ -4,6 +4,9 @@
   <div class="col-5"><a href="{% url 'song_detail' song.pk %}" class="text-white">{{ song.display_title }}</a></div>
   <div class="col-4 text-secondary">{{ song.artist_names }}</div>
   <div class="col-2 text-end">
+    <button type="button" class="icon-button js-play" data-song="{{ song.pk }}" aria-label="Play {{ song.track_name }}">
+      <i class="fa-solid fa-play"></i>
+    </button>
     {% if playlists %}
     <div class="dropdown d-inline">
       <button class="icon-button" data-bs-toggle="dropdown" aria-label="Add {{ song.track_name }} to a playlist" type="button">

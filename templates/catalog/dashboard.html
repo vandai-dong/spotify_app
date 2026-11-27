@@ -15,6 +15,19 @@
 </div>
 
 <br />
+{% if followed_artists %}
+<h4>Your artists</h4>
+<div class="scroll-container p-2">
+  {% for artist in followed_artists %}
+  <a href="{% url 'artist_detail' artist.uri %}" class="p-3 media-card text-center text-white">
+    <img src="{% if artist.image_url %}{{ artist.image_url }}{% else %}{% static 'img/placeholder.svg' %}{% endif %}"
+         alt="{{ artist.artist }}" class="rounded-circle" />
+    <div class="media-title">{{ artist.artist }}</div>
+  </a>
+  {% endfor %}
+</div>
+<br />
+{% endif %}
 <h4>Top Artists</h4>
 <div class="scroll-container p-2">
   {% for artist in top_artists %}

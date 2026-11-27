@@ -63,3 +63,19 @@ button.circle-button { background: none; border: 0; padding: 0; }
 .input-group input#userInput { background-color: #f9f9f9; color: #333; border: none; }
 
 #download a { color: #1DB954; text-decoration: underline; }
+
+/* Simulated now-playing bar */
+body.has-player { padding-bottom: 80px; }
+#player-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030;
+    display: flex; align-items: center; gap: 24px; padding: 10px 24px;
+    background: #181818; border-top: 1px solid #2a2a2a; color: white;
+}
+#player-bar[hidden] { display: none; }
+#player-bar .player-info { flex: 1 1 30%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#player-bar .player-controls { flex: 1 1 40%; display: flex; align-items: center; gap: 10px; }
+#player-bar .player-note { flex: 1 1 20%; text-align: right; }
+#player-bar .play-main { font-size: 1.6rem; color: white; }
+#player-bar .player-progress { flex: 1; height: 4px; background: #404040; border-radius: 2px; overflow: hidden; }
+#player-progress-fill { height: 100%; width: 0; background: #1db954; }
+@media (max-width: 767px) { #player-bar .player-note { display: none; } }

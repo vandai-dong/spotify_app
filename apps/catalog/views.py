@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
 
+from apps.library.models import FollowedArtist
+
 from .helpers import mark_liked, paginate, user_playlists
 from .models import Artist, Genre, Song
 from .services import recommend
@@ -16,11 +18,13 @@ def dashboard(request):
     top_artists = Artist.objects.order_by('?')[:DASHBOARD_ITEMS]
     top_songs = Song.objects.order_by('?')[:DASHBOARD_ITEMS]
     for_you, personalized = recommend.recommend_for_user(request.user, DASHBOARD_ITEMS)
+    followed = FollowedArtist.objects.filter(user=request.user).select_related('artist')[:DASHBOARD_ITEMS]
     return render(request, 'catalog/dashboard.html', {
         'top_artists': top_artists,
         'top_songs': top_songs,
         'for_you': for_you,
         'for_you_personalized': personalized,
+        'followed_artists': [f.artist for f in followed],
     })
 
 
@@ -79,8 +83,10 @@ def song_detail(request, song_id):
 def artist_detail(request, artist_id):
     artist = get_object_or_404(Artist, uri=artist_id)
     songs = artist.songs.order_by('-track_pop', 'track_name')[:ARTIST_SONG_LIMIT]
+    is_following = FollowedArtist.objects.filter(user=request.user, artist=artist).exists()
     return render(request, 'catalog/artist_detail.html', {
         'artist': artist,
+        'is_following': is_following,
         'songs': mark_liked(request.user, songs),
         'playlists': user_playlists(request.user),
     })

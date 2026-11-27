@@ -1,0 +1,20 @@
+<div id="player-bar" hidden
+     data-state-url="{% url 'player_state' %}"
+     data-play-url="{% url 'player_play' 0 %}"
+     data-next-url="{% url 'player_next' %}"
+     data-prev-url="{% url 'player_prev' %}"
+     data-toggle-url="{% url 'player_toggle' %}">
+  <div class="player-info">
+    <a id="player-title" href="#" class="text-white fw-bold"></a>
+    <div id="player-artist" class="text-secondary small"></div>
+  </div>
+  <div class="player-controls">
+    <button type="button" id="player-prev" class="icon-button" aria-label="Previous"><i class="fa-solid fa-backward-step"></i></button>
+    <button type="button" id="player-toggle" class="icon-button play-main" aria-label="Play or pause"><i class="fa-solid fa-play"></i></button>
+    <button type="button" id="player-next" class="icon-button" aria-label="Next"><i class="fa-solid fa-forward-step"></i></button>
+    <div class="player-progress" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div id="player-progress-fill"></div>
+    </div>
+  </div>
+  <div class="player-note text-secondary small">Simulated playback · no audio</div>
+</div>

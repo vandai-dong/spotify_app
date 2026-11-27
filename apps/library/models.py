@@ -53,3 +53,31 @@ class FavoriteSong(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.song.track_name}"
+
+
+class FollowedArtist(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='followed_artists')
+    artist = models.ForeignKey('catalog.Artist', on_delete=models.CASCADE, related_name='followers')
+    followed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'artist')
+        ordering = ['-followed_at']
+
+    def __str__(self):
+        return f"{self.user.username} follows {self.artist.artist}"
+
+
+class PlayHistory(models.Model):
+    """One row per (simulated) play. There is no audio; this just records what was 'played'."""
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='play_history')
+    song = models.ForeignKey('catalog.Song', on_delete=models.CASCADE, related_name='plays')
+    played_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-played_at', '-id']
+        verbose_name_plural = 'play history'
+
+    def __str__(self):
+        return f"{self.user.username} played {self.song.track_name}"
