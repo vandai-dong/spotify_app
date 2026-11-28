@@ -48,3 +48,12 @@ def song(db):
 @pytest.fixture
 def artist(db):
     return Artist.objects.create(artist='Drake', uri='3TVX', genres=['rap'], num_of_followers=10, popularity=90)
+
+
+@pytest.fixture(autouse=True)
+def _clear_recommender_cache():
+    from apps.catalog.services import recommend
+
+    recommend.clear_cache()
+    yield
+    recommend.clear_cache()

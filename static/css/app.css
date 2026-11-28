@@ -55,7 +55,8 @@ button.circle-button { background: none; border: 0; padding: 0; }
     border: 0;
     display: inline-block;
 }
-.pill.active, .pill:hover { background: white; color: black !important; }
+.shell-main a.pill { color: #fff; }
+.pill.active, .pill:hover, .shell-main a.pill.active, .shell-main a.pill:hover { background: white; color: black !important; }
 
 .panel-body#chat { height: 400px; overflow-y: auto; background-color: #f9f9f9; border-radius: 5px; color: #333; }
 #chat .list-group-item { background-color: #f9f9f9; border: none; }

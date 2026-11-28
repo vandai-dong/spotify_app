@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Charts - Spotify{% endblock %}
+{% block content %}
+<br />
+<h3>Charts</h3>
+
+<form method="get" class="row g-2 my-3 align-items-end">
+  <div class="col-md-4">
+    <label class="form-label small text-secondary" for="genre">Genre</label>
+    <select id="genre" name="genre" class="form-select form-select-sm">
+      <option value="">All genres</option>
+      {% for g in genres %}<option value="{{ g.name }}" {% if genre == g.name %}selected{% endif %}>{{ g.name }}</option>{% endfor %}
+      {% if genre %}<option value="{{ genre }}" selected hidden>{{ genre }}</option>{% endif %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label class="form-label small text-secondary" for="tempo_min">Min BPM</label>
+    <input id="tempo_min" name="tempo_min" type="number" min="0" max="300" value="{{ tempo_min }}" class="form-control form-control-sm" />
+  </div>
+  <div class="col-md-2">
+    <label class="form-label small text-secondary" for="tempo_max">Max BPM</label>
+    <input id="tempo_max" name="tempo_max" type="number" min="0" max="300" value="{{ tempo_max }}" class="form-control form-control-sm" />
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-success btn-sm">Apply</button>
+    <a href="{% url 'charts' %}" class="btn btn-outline-light btn-sm">Reset</a>
+  </div>
+</form>
+
+<h5 class="mt-4">Top songs</h5>
+{% for song in page_obj %}
+  {% include "partials/_song_row.html" %}
+{% empty %}
+  <p class="text-secondary">No songs match those filters.</p>
+{% endfor %}
+{% include "partials/_pagination.html" %}
+
+<h5 class="mt-5">Top artists</h5>
+<ol class="ps-3">
+  {% for artist in top_artists %}
+  <li class="py-1"><a href="{% url 'artist_detail' artist.uri %}">{{ artist.artist }}</a>
+    <span class="text-secondary">· popularity {{ artist.popularity }}</span></li>
+  {% endfor %}
+</ol>
+{% endblock %}
