@@ -1,33 +1,20 @@
-<div class="col-md-3 border-end border-dark shell-sidebar">
-  <div class="border border-dark p-3 mb-3 rounded">
-    <b><i class="fa-regular fa-user"></i> &nbsp; Welcome, {{ request.user.display_name }}</b>
+{% load static %}{% with url_name=request.resolver_match.url_name %}
+<nav class="shell-sidebar" aria-label="Main">
+  <a href="{% url 'dashboard' %}" class="brand" aria-label="Spindle home">
+    <img src="{% static 'img/spindle_mark.svg' %}" id="logo" alt="" width="36" height="36" />
+    <span>Spindle</span>
+  </a>
+
+  <div class="side-nav">
+    <a href="{% url 'dashboard' %}" class="side-link{% if url_name == 'dashboard' %} active{% endif %}"><i class="fa-regular fa-circle-dot"></i> Now spinning</a>
+    <a href="{% url 'search' %}" class="side-link{% if url_name == 'search' %} active{% endif %}"><i class="fa-solid fa-magnifying-glass"></i> Search</a>
+    <a href="{% url 'your_library' %}" class="side-link{% if url_name == 'your_library' or url_name == 'playlist_detail' or url_name == 'recent' %} active{% endif %}"><i class="fa-solid fa-box-archive"></i> Your Crates</a>
+    <a href="{% url 'like_song' %}" class="side-link{% if url_name == 'like_song' %} active{% endif %}"><i class="fa-regular fa-heart"></i> Liked Songs</a>
+    <a href="{% url 'browse' %}" class="side-link{% if url_name == 'browse' %} active{% endif %}"><i class="fa-solid fa-compass"></i> Browse</a>
+    <a href="{% url 'charts' %}" class="side-link{% if url_name == 'charts' %} active{% endif %}"><i class="fa-solid fa-chart-line"></i> Charts</a>
+    <a href="{% url 'chatbot' %}" class="side-link{% if url_name == 'chatbot' %} active{% endif %}"><i class="fa-solid fa-comment-dots"></i> Ask the record shop</a>
   </div>
 
-  <div class="border border-dark p-3 mb-3 rounded">
-    <div class="mb-2">
-      <a href="{% url 'your_library' %}" class="text-white">
-        <b><i class="fa-solid fa-music"></i> &nbsp; Your Library</b>
-      </a>
-    </div>
-    <div>
-      <a href="{% url 'like_song' %}" class="text-white">
-        <b><i class="fa-regular fa-heart"></i> &nbsp; Liked Songs</b>
-      </a>
-    </div>
-  </div>
-
-  <div class="border border-dark p-3 mb-3 rounded">
-    <div class="mb-2">
-      <a href="{% url 'browse' %}" class="text-white"><b><i class="fa-solid fa-compass"></i> &nbsp; Browse</b></a>
-    </div>
-    <div>
-      <a href="{% url 'charts' %}" class="text-white"><b><i class="fa-solid fa-trophy"></i> &nbsp; Charts</b></a>
-    </div>
-  </div>
-
-  <div class="border border-dark p-3 rounded">
-    <a href="{% url 'chatbot' %}" class="text-white">
-      <b><i class="fa-regular fa-circle-question"></i> &nbsp; Ask Me</b>
-    </a>
-  </div>
-</div>
+  <div class="side-user"><i class="fa-regular fa-user"></i> &nbsp;Welcome, <b>{{ request.user.display_name }}</b></div>
+</nav>
+{% endwith %}

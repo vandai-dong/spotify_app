@@ -84,7 +84,9 @@ def test_returns_reply_and_validated_songs(logged_in, model):
     model.content = reply('Try this one!', [hit.pk])
     data = ask(logged_in, 'sunny').json()
     assert data['completion'] == 'Try this one!'
-    assert data['songs'] == [{'id': hit.pk, 'title': 'Sunny Day', 'artist': 'Ray', 'url': f'/songs/{hit.pk}', 'liked': False}]
+    assert data['songs'] == [{
+        'id': hit.pk, 'title': 'Sunny Day', 'artist': 'Ray', 'image': '', 'url': f'/songs/{hit.pk}', 'liked': False,
+    }]
 
 
 def test_made_up_and_unoffered_ids_are_dropped(logged_in, model):

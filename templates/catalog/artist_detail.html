@@ -1,16 +1,15 @@
 {% extends "base.html" %}
-{% load static %}
-{% block title %}{{ artist.artist }} - Spotify{% endblock %}
+{% load covers %}
+{% block title %}{{ artist.artist }} - Spindle{% endblock %}
 {% block content %}
 <div class="row mt-4 align-items-center">
   <div class="col-md-3 text-center">
-    <img src="{% if artist.image_url %}{{ artist.image_url }}{% else %}{% static 'img/placeholder.svg' %}{% endif %}"
-         alt="{{ artist.artist }}" class="img-fluid rounded-circle" style="max-width: 200px" />
+    {% cover artist shape='circle' css='img-fluid' size=200 %}
   </div>
   <div class="col-md-9">
-    <span class="text-secondary">Artist</span>
-    <h1>{{ artist.artist }}</h1>
-    <p class="text-secondary">{{ artist.num_of_followers|floatformat:"0g" }} followers · popularity {{ artist.popularity }}/100</p>
+    <span class="eyebrow accent">Artist</span>
+    <h1 class="hero-title">{{ artist.artist }}</h1>
+    <p class="text-secondary mono small">{{ artist.num_of_followers|floatformat:"0g" }} followers · popularity {{ artist.popularity }}/100</p>
     <form action="{% url 'toggle_follow' artist.uri %}" method="post" class="mb-3">
       {% csrf_token %}
       <button type="submit" class="btn btn-sm {% if is_following %}btn-success{% else %}btn-outline-light{% endif %}">
@@ -21,7 +20,19 @@
   </div>
 </div>
 
-<h5 class="mt-5">Songs</h5>
+{% if albums %}
+<h4 class="mt-5 mb-2">Albums</h4>
+<div class="scroll-container">
+  {% for album in albums %}
+  <a href="{% url 'album_detail' album.uri %}" class="media-card text-white">
+    {% cover album shape='sleeve' %}
+    <div class="media-title">{{ album.name }}</div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<h4 class="mt-5 mb-2">Songs</h4>
 {% for song in songs %}
   {% include "partials/_song_row.html" %}
 {% empty %}

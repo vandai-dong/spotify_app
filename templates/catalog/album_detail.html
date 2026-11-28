@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load covers %}
+{% block title %}{{ album.name }} - Spindle{% endblock %}
+{% block content %}
+<section class="hero-spin mt-3">
+  <div style="flex: 0 0 min(280px, 100%); max-width: 280px">
+    <span class="sleeve-wrap">{% cover album shape='sleeve' css='img-fluid w-100' %}</span>
+  </div>
+  <div class="hero-info">
+    <div class="eyebrow accent">Album · 33⅓ RPM · 12" LP</div>
+    <h1 class="hero-title">{{ album.name }}</h1>
+    <p class="fs-5 mb-0">
+      {% if album.primary_artist %}<a href="{% url 'artist_detail' album.primary_artist.uri %}">{{ album.primary_artist.artist }}</a>{% endif %}
+      <span class="text-secondary">· {{ songs|length }} song{{ songs|length|pluralize }} in the catalog</span>
+    </p>
+  </div>
+</section>
+
+<h4 class="mt-5 mb-2">Songs</h4>
+{# The queue sent to the player follows DOM order, so the two sides together keep the original track order. #}
+<div class="track-sides">
+  <div>
+    <div class="side-heading">Side A</div>
+    {% for song in side_a %}
+      {% include "partials/_song_row.html" %}
+    {% endfor %}
+  </div>
+  <div>
+    <div class="side-heading">Side B</div>
+    {% for song in side_b %}
+      {% include "partials/_song_row.html" %}
+    {% endfor %}
+  </div>
+</div>
+{% if not songs %}<p class="text-secondary">No songs from this album in the catalog.</p>{% endif %}
+{% endblock %}

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Settings - Spotify{% endblock %}
+{% block title %}Settings - Spindle{% endblock %}
 {% block content %}
-<br />
-<h3>Settings</h3>
+<div class="eyebrow mt-2">Your account</div>
+<h1 style="font-weight: 500">Settings</h1>
 
 <h5 class="mt-4">Profile</h5>
 <form method="post" class="row g-3" style="max-width: 640px">
@@ -36,7 +36,7 @@
 <a href="{% url 'password_change' %}" class="btn btn-outline-light btn-sm">Change password</a>
 
 <h5 class="mt-5 text-danger">Delete account</h5>
-<p class="text-secondary" style="max-width: 640px">This permanently removes your account, playlists and liked songs. It cannot be undone.</p>
+<p class="text-secondary" style="max-width: 640px">This permanently removes your account, crates and liked songs. It cannot be undone.</p>
 <form action="{% url 'delete_account' %}" method="post" class="row g-2" style="max-width: 640px"
       onsubmit="return confirm('Delete your account permanently?')">
   {% csrf_token %}

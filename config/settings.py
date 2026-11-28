@@ -133,6 +133,10 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT.mkdir(exist_ok=True)  # WhiteNoise warns if the collectstatic target is missing
 
+# User-uploaded cover images (admin). Served by Django only when DEBUG; use real storage/CDN in production.
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

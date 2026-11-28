@@ -1,13 +1,14 @@
 {% extends "base.html" %}
-{% block title %}{{ playlist.name }} - Spotify{% endblock %}
+{% load covers %}
+{% block title %}{{ playlist.name }} - Spindle{% endblock %}
 {% block content %}
-<br />
-<a href="{% url 'your_library' %}">&larr; Your Library</a>
-<div class="d-flex align-items-center gap-3 mt-3">
-  {% include "partials/_playlist_cover.html" with size=120 %}
+<a href="{% url 'your_library' %}" class="eyebrow d-inline-block mt-2">&larr; Your Crates</a>
+<div class="d-flex align-items-end gap-4 mt-3 flex-wrap">
+  {% include "partials/_playlist_cover.html" with size=160 %}
   <div>
-    <h2>{{ playlist.name }}</h2>
-    <p class="text-secondary mb-0">{{ playlist.tag }}{% if playlist.description %} · {{ playlist.description }}{% endif %}</p>
+    <div class="eyebrow accent">{% if playlist.tag == "Playlist" %}Crate{% else %}{{ playlist.tag }}{% endif %}</div>
+    <h1 class="hero-title">{{ playlist.name }}</h1>
+    <p class="text-secondary mb-0">{{ entries|length }} record{{ entries|length|pluralize }}{% if playlist.description %} · {{ playlist.description }}{% endif %}</p>
   </div>
 </div>
 
@@ -26,25 +27,28 @@
     {% csrf_token %}<input type="hidden" name="action" value="enable" />
     <button type="submit" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-link"></i> Create public link</button>
   </form>
-  <span class="text-secondary small ms-2">Anyone with the link can view this playlist (read-only).</span>
+  <span class="text-secondary small ms-2">Anyone with the link can view this crate (read-only).</span>
   {% endif %}
 </div>
 
 <form action="{% url 'playlist_update' playlist.pk %}" method="post" class="row g-2 mb-3">
   {% csrf_token %}
-  <div class="col-md-4"><input type="text" name="name" value="{{ playlist.name }}" class="form-control" required maxlength="255" aria-label="Playlist name" /></div>
+  <div class="col-md-4"><input type="text" name="name" value="{{ playlist.name }}" class="form-control" required maxlength="255" aria-label="Crate name" /></div>
   <div class="col-md-5"><input type="text" name="description" value="{{ playlist.description }}" class="form-control" placeholder="Description" aria-label="Description" /></div>
   <div class="col-auto"><button type="submit" class="btn btn-outline-light btn-sm">Rename</button></div>
 </form>
-<form action="{% url 'playlist_delete' playlist.pk %}" method="post" onsubmit="return confirm('Delete this playlist?')" class="mb-4">
+<form action="{% url 'playlist_delete' playlist.pk %}" method="post" onsubmit="return confirm('Delete this crate?')" class="mb-4">
   {% csrf_token %}
-  <button type="submit" class="btn btn-outline-danger btn-sm">Delete playlist</button>
+  <button type="submit" class="btn btn-outline-danger btn-sm">Delete crate</button>
 </form>
 
 {% for entry in entries %}
 <div class="row song-row align-items-center">
-  <div class="col-1">{{ forloop.counter }}</div>
-  <div class="col-5"><a href="{% url 'song_detail' entry.song.pk %}" class="text-white">{{ entry.song.display_title }}</a></div>
+  <div class="col-1 rank">{{ forloop.counter }}</div>
+  <div class="col-5 d-flex align-items-center gap-2">
+    {% cover entry.song shape='sleeve' size=40 alt="" %}
+    <a href="{% url 'song_detail' entry.song.pk %}" class="text-white">{{ entry.song.display_title }}</a>
+  </div>
   <div class="col-4 text-secondary">{{ entry.song.artist_names }}</div>
   <div class="col-2 text-end">
     <form action="{% url 'playlist_move_song' playlist.pk entry.song.pk %}" method="post">
@@ -61,6 +65,6 @@
   </div>
 </div>
 {% empty %}
-<p class="text-secondary">This playlist is empty. Use the search bar and the <i class="fa-solid fa-plus"></i> button to add songs.</p>
+<p class="text-secondary">This crate is empty. Use the search bar and the <i class="fa-solid fa-plus"></i> button to add songs.</p>
 {% endfor %}
 {% endblock %}

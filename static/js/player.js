@@ -6,12 +6,14 @@
 
   const csrf = document.querySelector('meta[name="csrf-token"]').content;
   const el = {
+    cover: document.getElementById("player-cover"),
     title: document.getElementById("player-title"),
     artist: document.getElementById("player-artist"),
     toggle: document.getElementById("player-toggle"),
     fill: document.getElementById("player-progress-fill"),
     progress: bar.querySelector(".player-progress"),
   };
+  el.cover.addEventListener("error", () => { el.cover.hidden = true; });
   let current = null; // song payload from the server
   let playing = false;
   let elapsed = 0; // ms
@@ -39,7 +41,15 @@
 
   function render() {
     bar.hidden = !current;
+    // Drives the spinning-record animation in app.css.
+    document.body.classList.toggle("is-playing", Boolean(current && playing));
     if (!current) return;
+    if (current.image) {
+      el.cover.src = current.image;
+      el.cover.hidden = false;
+    } else {
+      el.cover.hidden = true;
+    }
     el.title.textContent = current.title;
     el.title.href = current.url;
     el.artist.textContent = current.artist;

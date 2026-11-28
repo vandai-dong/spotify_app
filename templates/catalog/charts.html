@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Charts - Spotify{% endblock %}
+{% load covers %}
+{% block title %}Charts - Spindle{% endblock %}
 {% block content %}
-<br />
-<h3>Charts</h3>
+<div class="eyebrow mt-2">Top of the pile</div>
+<h1 style="font-weight: 500">Charts</h1>
 
 <form method="get" class="row g-2 my-3 align-items-end">
   <div class="col-md-4">
@@ -27,7 +28,7 @@
   </div>
 </form>
 
-<h5 class="mt-4">Top songs</h5>
+<h4 class="mt-4 mb-2">Top songs</h4>
 {% for song in page_obj %}
   {% include "partials/_song_row.html" %}
 {% empty %}
@@ -35,10 +36,10 @@
 {% endfor %}
 {% include "partials/_pagination.html" %}
 
-<h5 class="mt-5">Top artists</h5>
+<h4 class="mt-5 mb-2">Top artists</h4>
 <ol class="ps-3">
   {% for artist in top_artists %}
-  <li class="py-1"><a href="{% url 'artist_detail' artist.uri %}">{{ artist.artist }}</a>
+  <li class="py-1">{% cover artist shape='circle' size=32 alt="" css='me-2 align-middle' %}<a href="{% url 'artist_detail' artist.uri %}">{{ artist.artist }}</a>
     <span class="text-secondary">· popularity {{ artist.popularity }}</span></li>
   {% endfor %}
 </ol>

@@ -1,24 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Your Library - Spotify{% endblock %}
+{% load covers %}
+{% block title %}Your Crates - Spindle{% endblock %}
 {% block content %}
-<br />
-<div class="d-flex justify-content-between align-items-center">
-  <h3>Your Library</h3>
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mt-2">
+  <div>
+    <div class="eyebrow">Your collection</div>
+    <h1 class="mb-0" style="font-weight: 500">Your Crates</h1>
+  </div>
   <a href="{% url 'recent' %}" class="small"><i class="fa-solid fa-clock-rotate-left"></i> Recently played</a>
 </div>
 <div class="my-3">
   <a href="{% url 'your_library' %}" class="pill {% if not tag %}active{% endif %}">All</a>
   {% for value, label in tag_choices %}
-  <a href="{% url 'your_library' %}?tag={{ value }}" class="pill {% if tag == value %}active{% endif %}">{{ label }}s</a>
+  <a href="{% url 'your_library' %}?tag={{ value }}" class="pill {% if tag == value %}active{% endif %}">{% if value == "Playlist" %}Crate{% else %}{{ label }}{% endif %}s</a>
   {% endfor %}
 </div>
 
 <form action="{% url 'playlist_create' %}" method="post" class="row g-2 mb-4">
   {% csrf_token %}
-  <div class="col-md-5"><input type="text" name="name" class="form-control" placeholder="New playlist name" required maxlength="255" /></div>
+  <div class="col-md-5"><input type="text" name="name" class="form-control" placeholder="New crate name" required maxlength="255" /></div>
   <div class="col-md-3">
     <select name="tag" class="form-select">
-      {% for value, label in tag_choices %}<option value="{{ value }}"{% if value == "Playlist" %} selected{% endif %}>{{ label }}</option>{% endfor %}
+      {% for value, label in tag_choices %}<option value="{{ value }}"{% if value == "Playlist" %} selected{% endif %}>{% if value == "Playlist" %}Crate{% else %}{{ label }}{% endif %}</option>{% endfor %}
     </select>
   </div>
   <div class="col-md-2"><button type="submit" class="btn btn-success">Create</button></div>
@@ -27,10 +30,10 @@
 {% if followed_artists %}
 <h5 class="mt-2">Followed artists</h5>
 {% for artist in followed_artists %}
-<a href="{% url 'artist_detail' artist.uri %}" class="d-block song-row text-white"><b>{{ artist.artist }}</b>
+<a href="{% url 'artist_detail' artist.uri %}" class="d-block song-row text-white">{% cover artist shape='circle' size=40 alt="" css='me-2 align-middle' %}<b>{{ artist.artist }}</b>
   <span class="text-secondary">· Artist</span></a>
 {% endfor %}
-<h5 class="mt-4">Playlists</h5>
+<h5 class="mt-4">Crates</h5>
 {% elif tag == 'Artist' %}
 <p class="text-secondary">You are not following any artists yet. Open an artist page and tap Follow.</p>
 {% endif %}
@@ -39,12 +42,12 @@
 <a href="{% url 'playlist_detail' playlist.pk %}" class="d-flex align-items-center gap-3 song-row text-white">
   {% include "partials/_playlist_cover.html" with size=56 %}
   <div>
-    <b>{{ playlist.name }}</b>
-    <div class="text-secondary small">{{ playlist.tag }} · {{ playlist.song_count }} song{{ playlist.song_count|pluralize }}{% if playlist.share_token %} · <i class="fa-solid fa-link"></i> shared{% endif %}</div>
+    <b style="font-family: var(--sp-font-display); font-size: 17px">{{ playlist.name }}</b>
+    <div class="text-secondary small">{% if playlist.tag == "Playlist" %}Crate{% else %}{{ playlist.tag }}{% endif %} · {{ playlist.song_count }} song{{ playlist.song_count|pluralize }}{% if playlist.share_token %} · <i class="fa-solid fa-link"></i> shared{% endif %}</div>
   </div>
 </a>
 {% empty %}
-<p class="text-secondary">Nothing here yet. Create a playlist above, then add songs from search.</p>
+<p class="text-secondary">Nothing here yet. Create a crate above, then add songs from search.</p>
 {% endfor %}
 {% include "partials/_pagination.html" %}
 {% endblock %}

@@ -1,10 +1,13 @@
-# Spotify Simulation App
+# Spindle (Spotify Simulation App)
 
-A Django web app that simulates parts of Spotify: sign-up / login, a dashboard of top artists and songs,
-song search, liked songs, playlists (your library) and an AI chat assistant. It runs on a bundled dataset of
-~1,200 globally popular songs and ~110 artists (2023–2024 weekly charts).
+Spindle is a Django web app that simulates parts of a music-streaming service, dressed as a vinyl record shop:
+sign-up / login, a dashboard of top artists and songs, song search, liked songs, playlists (shown as "crates"),
+albums with Side A / Side B track lists, a simulated now-playing bar and an AI chat assistant. It runs on a
+bundled dataset of ~1,200 globally popular songs and ~110 artists (2023–2024 weekly charts) that comes from
+Spotify (see [Data sources](#data-sources)).
 
-> Not affiliated with Spotify. There is no audio playback.
+> Not affiliated with or endorsed by Spotify. All song, artist and album metadata and cover images belong to
+> their respective owners. There is no audio playback.
 
 ## Quick start
 
@@ -42,8 +45,53 @@ With `DJANGO_DEBUG=false`, also run `python manage.py collectstatic` (WhiteNoise
 ## Management commands
 
 - `import_songs [csv]`, `import_artists [csv]` — load the bundled CSVs (idempotent; safe to re-run).
-- `fetch_images [--force] [--limit N]` — cache artist/album image URLs from the Spotify Web API in the database
-  (requires Spotify credentials). The web app itself never calls Spotify.
+- `fetch_images [--force] [--limit N]` — cache artist/song image URLs and create `Album` rows (name, cover, artist)
+  from the Spotify Web API (requires Spotify credentials). The web app itself never calls Spotify.
+
+Images can also be uploaded by hand in the Django admin (Artists, Songs, Albums). An upload overrides the cached
+URL and is never overwritten by `fetch_images`. Uploads go to `media/` (git-ignored) and are served by Django only
+when `DJANGO_DEBUG` is on; use real storage / a CDN in production. Requires Pillow (in `requirements/base.txt`).
+
+## Design and inspiration
+
+The UI is called **Spindle**. The app simulates a streaming service, but you can't hear anything, so the interface
+leans on what you can *see*: the ritual of listening to a record. The look was first drawn as a design canvas
+(desktop "now spinning" screen, phone player, phone crates) and then built into the Django templates.
+
+**Inspiration**
+
+- **The record shop and the listening room.** A warm, dark, low-light palette, like a room lit by a single lamp,
+  instead of the usual black-and-neon streaming look.
+- **Vinyl as the interface.** Songs are records, playlists are *crates* you dig through, albums are sleeves with a
+  shaded spine, and an album's tracks are split into **Side A / Side B**. Labels such as "33⅓ RPM · 12" LP" echo
+  the print on a real sleeve.
+- **Hi-fi equipment.** The song page is a turntable: a spinning record with an orange centre label and a tonearm.
+  The mini player carries a small record that spins only while something is playing.
+
+**Design system** (tokens live in [`static/css/tokens.css`](static/css/tokens.css))
+
+| Role | Value |
+| --- | --- |
+| Background / sidebar / surface | `#15110E` / `#0F0C0A` / `#241C17` |
+| Border | `#3A2E26` |
+| Text / muted text | `#F1E7D4` / `#B9AB94` |
+| Accent (record-label orange) | `#E8602C`, focus ring `#F4C26B` |
+| Headings | [Fraunces](https://fonts.google.com/specimen/Fraunces) (serif display) |
+| Body | [DM Sans](https://fonts.google.com/specimen/DM+Sans) |
+| Labels, times, track numbers | [DM Mono](https://fonts.google.com/specimen/DM+Mono) |
+
+**How it is built**
+
+- Bootstrap 5.3 (dark theme) is still the base; `static/css/app.css` re-points its variables and components at the
+  tokens, so unmodified pages pick up the theme automatically.
+- The record, turntable, sleeves and mini player are pure CSS / inline SVG: no images or extra dependencies.
+  `partials/_record.html` is the shared record; `{% cover obj shape='sleeve' %}` renders album-sleeve covers.
+- `static/js/player.js` toggles an `is-playing` class on `<body>` so the records only spin during playback; the
+  animation is disabled for visitors who prefer reduced motion.
+- Standalone pages (login, sign-up, password reset, 404 and the public shared-crate page) load `tokens.css` plus
+  `auth.css` / `spindle-404.css`, so they match the signed-in app.
+- Accessibility: visible focus rings, 44 px touch targets for controls, text at 4.5:1 contrast or better.
+- Wording is a display-only change: a playlist tagged `Playlist` in the database is shown as a "Crate".
 
 ## Project layout
 
@@ -71,5 +119,16 @@ CI (GitHub Actions) runs the same checks on every push.
 
 ## Data sources
 
-1. Artist dataset: [Spotify Artist Metadata Top 10k](https://www.kaggle.com/datasets/jackharding/spotify-artist-metadata-top-10k)
-2. Weekly global top-songs charts from [charts.spotify.com](https://charts.spotify.com/charts/view/regional-global-weekly/latest), enriched via the Spotify Web API.
+All catalog data originates from Spotify:
+
+1. **Artists:** [Spotify Artist Metadata Top 10k](https://www.kaggle.com/datasets/jackharding/spotify-artist-metadata-top-10k)
+   (Kaggle), a dataset of Spotify artist metadata.
+2. **Songs:** weekly global top-songs charts from
+   [charts.spotify.com](https://charts.spotify.com/charts/view/regional-global-weekly/latest), enriched through the
+   Spotify Web API (the data carries tempo, mode, danceability and similar audio features). The crawling tools are
+   in `scripts/ingestion/`; the processed CSVs are bundled in `data/`.
+3. **Cover images:** artist, song and album image URLs are fetched from the Spotify Web API by `fetch_images`
+   (needs your own Spotify credentials) and cached in the database. The running web app never calls Spotify.
+
+Fonts are loaded from Google Fonts (SIL Open Font License); icons are [Font Awesome](https://fontawesome.com/) Free.
+The sample album, artist and song names in the design canvas are placeholders and are not part of the dataset.

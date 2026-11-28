@@ -43,6 +43,16 @@
     const row = document.createElement("div");
     row.className = "d-flex align-items-center gap-2 py-1 song-chip";
 
+    let cover = null;
+    if (song.image) {
+      cover = document.createElement("img");
+      cover.src = song.image;
+      cover.alt = "";
+      cover.width = cover.height = 32;
+      cover.className = "rounded song-chip-cover";
+      cover.addEventListener("error", () => cover.remove());
+    }
+
     const link = document.createElement("a");
     link.textContent = song.title;
     if (/^\/songs\/\d+$/.test(song.url)) link.href = song.url;
@@ -65,13 +75,14 @@
       heart.className = (song.liked ? "fa-solid" : "fa-regular") + " fa-heart";
     });
 
+    if (cover) row.append(cover);
     row.append(link, artist, like);
 
     if (playlists.length) {
       const select = document.createElement("select");
       select.className = "form-select form-select-sm w-auto";
       select.setAttribute("aria-label", "Add " + song.title + " to a playlist");
-      const placeholder = new Option("Add to playlist…", "");
+      const placeholder = new Option("Add to crate…", "");
       select.add(placeholder);
       playlists.forEach((p) => select.add(new Option(p.name, String(p.id))));
       select.addEventListener("change", async () => {

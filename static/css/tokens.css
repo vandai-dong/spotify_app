@@ -1,0 +1,33 @@
+/* Spindle design tokens: shared by app.css and the standalone pages (login, signup, 404, ...) */
+:root {
+    --sp-bg: #15110e;
+    --sp-sidebar: #0f0c0a;
+    --sp-surface: #241c17;
+    --sp-raised: #2a1f18;
+    --sp-input: #1d1612;
+    --sp-border: #3a2e26;
+    --sp-text: #f1e7d4;
+    --sp-muted: #b9ab94;
+    --sp-accent: #e8602c;
+    --sp-accent-ink: #15110e;
+    --sp-focus: #f4c26b;
+    --sp-font-display: 'Fraunces', Georgia, serif;
+    --sp-font-body: 'DM Sans', system-ui, sans-serif;
+    --sp-font-mono: 'DM Mono', ui-monospace, monospace;
+}
+
+body {
+    background-color: var(--sp-bg);
+    color: var(--sp-text);
+    font-family: var(--sp-font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--sp-font-display);
+    letter-spacing: -0.01em;
+}
+
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--sp-focus);
+    outline-offset: 2px;
+}

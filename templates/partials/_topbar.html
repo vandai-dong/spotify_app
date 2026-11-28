@@ -1,29 +1,12 @@
-{% load static %}
-<div class="row align-items-center">
-  <div class="col-md-3">
-    <a href="{% url 'dashboard' %}">
-      <img src="{% static 'img/spotify_logo.jpg' %}" id="logo" alt="Spotify Logo" width="60" />
-    </a>
-  </div>
-  <div class="col-auto">
-    <a href="{% url 'dashboard' %}" class="circle" aria-label="Home"><i class="fas fa-home"></i></a>
-  </div>
-  <div class="col">
-    <form action="{% url 'search' %}" method="get" role="search">
-      <input type="search" name="q" value="{{ query|default:'' }}" class="search-input"
-             placeholder="What do you want to play?" aria-label="Search songs and artists" />
-    </form>
-  </div>
-  <div class="col-auto">
+<header class="shell-topbar">
+  <form action="{% url 'search' %}" method="get" role="search" class="topbar-search">
+    <input type="search" name="q" value="{{ query|default:'' }}" class="search-input"
+           placeholder="Search records, artists, songs" aria-label="Search songs and artists" />
+  </form>
+  <div class="topbar-actions">
     <a href="{% url 'download_app' %}" class="circle" aria-label="Download app"><i class="fa-solid fa-download"></i></a>
-  </div>
-  <div class="col-auto">
     <a href="{% url 'notification' %}" class="circle" aria-label="Notifications"><i class="fa-regular fa-bell"></i></a>
-  </div>
-  <div class="col-auto">
     <a href="{% url 'settings' %}" class="circle" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
-  </div>
-  <div class="col-auto">
     <form action="{% url 'logout' %}" method="post">
       {% csrf_token %}
       <button type="submit" class="circle circle-button" aria-label="Log out">
@@ -31,4 +14,4 @@
       </button>
     </form>
   </div>
-</div>
+</header>
