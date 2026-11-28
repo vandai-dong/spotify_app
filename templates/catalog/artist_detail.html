@@ -11,6 +11,12 @@
     <span class="text-secondary">Artist</span>
     <h1>{{ artist.artist }}</h1>
     <p class="text-secondary">{{ artist.num_of_followers|floatformat:"0g" }} followers · popularity {{ artist.popularity }}/100</p>
+    <form action="{% url 'toggle_follow' artist.uri %}" method="post" class="mb-3">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-sm {% if is_following %}btn-success{% else %}btn-outline-light{% endif %}">
+        {% if is_following %}<i class="fa-solid fa-check"></i> Following{% else %}Follow{% endif %}
+      </button>
+    </form>
     <p>{% for genre in artist.genres|slice:":8" %}<a href="{% url 'browse' %}?genre={{ genre|urlencode }}" class="pill me-1">{{ genre }}</a>{% endfor %}</p>
   </div>
 </div>

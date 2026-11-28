@@ -2,7 +2,10 @@
 {% block title %}Your Library - Spotify{% endblock %}
 {% block content %}
 <br />
-<h3>Your Library</h3>
+<div class="d-flex justify-content-between align-items-center">
+  <h3>Your Library</h3>
+  <a href="{% url 'recent' %}" class="small"><i class="fa-solid fa-clock-rotate-left"></i> Recently played</a>
+</div>
 <div class="my-3">
   <a href="{% url 'your_library' %}" class="pill {% if not tag %}active{% endif %}">All</a>
   {% for value, label in tag_choices %}
@@ -20,6 +23,17 @@
   </div>
   <div class="col-md-2"><button type="submit" class="btn btn-success">Create</button></div>
 </form>
+
+{% if followed_artists %}
+<h5 class="mt-2">Followed artists</h5>
+{% for artist in followed_artists %}
+<a href="{% url 'artist_detail' artist.uri %}" class="d-block song-row text-white"><b>{{ artist.artist }}</b>
+  <span class="text-secondary">· Artist</span></a>
+{% endfor %}
+<h5 class="mt-4">Playlists</h5>
+{% elif tag == 'Artist' %}
+<p class="text-secondary">You are not following any artists yet. Open an artist page and tap Follow.</p>
+{% endif %}
 
 {% for playlist in playlists %}
 <a href="{% url 'playlist_detail' playlist.pk %}" class="d-block song-row text-white">
