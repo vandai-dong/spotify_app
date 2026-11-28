@@ -21,6 +21,9 @@
     <a href="{% url 'notification' %}" class="circle" aria-label="Notifications"><i class="fa-regular fa-bell"></i></a>
   </div>
   <div class="col-auto">
+    <a href="{% url 'settings' %}" class="circle" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
+  </div>
+  <div class="col-auto">
     <form action="{% url 'logout' %}" method="post">
       {% csrf_token %}
       <button type="submit" class="circle circle-button" aria-label="Log out">

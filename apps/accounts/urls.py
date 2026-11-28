@@ -1,4 +1,5 @@
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
 from django.urls import path, reverse_lazy
 
 from . import views
@@ -6,6 +7,9 @@ from . import views
 urlpatterns = [
     path('', views.LoginView.as_view(), name='login'),
     path('logout', views.logout, name='logout'),
+    path('settings', views.settings_page, name='settings'),
+    path('settings/password', login_required(views.PasswordChangeView.as_view()), name='password_change'),
+    path('settings/delete', views.delete_account, name='delete_account'),
     path('sign_up', views.sign_up, name='sign_up'),
     path('sign_up_form', views.sign_up_form, name='sign_up_form'),
     path('reset_password', auth_views.PasswordResetView.as_view(
