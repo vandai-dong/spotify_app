@@ -1,65 +1,76 @@
 {% extends "base.html" %}
-{% load static %}
-{% block title %}{{ song.display_title }} - Spotify{% endblock %}
+{% load covers %}
+{% block title %}{{ song.display_title }} - Spindle{% endblock %}
 {% block content %}
-<div class="row mt-4 align-items-center">
-  <div class="col-md-3">
-    <img src="{% if song.song_img_url %}{{ song.song_img_url }}{% else %}{% static 'img/placeholder.svg' %}{% endif %}"
-         alt="{{ song.track_name }}" class="img-fluid rounded" />
+<section class="hero-spin mt-3" aria-label="Now spinning">
+  <div class="turntable" style="flex: 0 0 min(440px, 100%)">
+    <div class="turntable-plinth"></div>
+    {% include "partials/_record.html" with side="A" title=song.track_name %}
+    <svg class="tonearm" viewBox="0 0 440 440" aria-hidden="true">
+      <circle cx="378" cy="70" r="26" fill="#241C17" stroke="#3A2E26" stroke-width="2"/>
+      <circle cx="378" cy="70" r="9" fill="#B9AB94"/>
+      <path d="M378 70 L344 250 L300 318" fill="none" stroke="#D9CDB8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <g transform="translate(300 318) rotate(28)"><rect x="-9" y="-4" width="18" height="34" rx="3" fill="#F1E7D4"/><rect x="-3" y="28" width="6" height="8" fill="#E8602C"/></g>
+      <rect x="360" y="40" width="36" height="20" rx="4" fill="#3A2E26" transform="rotate(-18 378 50)"/>
+    </svg>
   </div>
-  <div class="col-md-9">
-    <span class="text-secondary">Song</span>
-    <h1>{{ song.track_name }}</h1>
-    <p>
+
+  <div class="hero-info">
+    <span class="sleeve-wrap mb-3" style="width: 120px; height: 120px">{% cover song shape='sleeve' size=120 %}</span>
+    <div class="eyebrow accent">{{ song.tempo|floatformat:0 }} BPM · {{ song.get_mode_display }} · {{ duration }}</div>
+    <h1 class="hero-title">{{ song.track_name }}</h1>
+    <p class="fs-5 text-secondary mb-3">
       {% if song.primary_artist %}<a href="{% url 'artist_detail' song.primary_artist.uri %}">{{ song.artist_names }}</a>
       {% else %}{{ song.artist_names }}{% endif %}
-      <span class="text-secondary">· {{ duration }} · {{ song.get_mode_display }} · {{ song.tempo|floatformat:0 }} BPM</span>
+      {% if song.album %}<span>· <a href="{% url 'album_detail' song.album.uri %}" class="text-secondary">{{ song.album.name }}</a></span>{% endif %}
     </p>
-    <p>{% for genre in song.genres.all|slice:":8" %}<a href="{% url 'browse' %}?genre={{ genre.name|urlencode }}" class="pill me-1">{{ genre.name }}</a>{% endfor %}</p>
-    <button type="button" class="btn btn-sm btn-success js-play" data-song="{{ song.pk }}"><i class="fa-solid fa-play"></i> Play</button>
-    <form action="{% url 'toggle_favorite' song.pk %}" method="post" class="d-inline">
-      {% csrf_token %}
-      <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-      <button type="submit" class="btn btn-sm {% if song.liked %}btn-success{% else %}btn-outline-light{% endif %}">
-        <i class="{% if song.liked %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i> {% if song.liked %}Liked{% else %}Like{% endif %}
-      </button>
-    </form>
-    {% if playlists %}
-    <div class="dropdown d-inline">
-      <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" type="button">Add to playlist</button>
-      <ul class="dropdown-menu dropdown-menu-dark">
-        {% for playlist in playlists %}
-        <li>
-          <form action="{% url 'playlist_add_song' playlist.pk %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="song_id" value="{{ song.pk }}" />
-            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-            <button class="dropdown-item" type="submit">{{ playlist.name }}</button>
-          </form>
-        </li>
-        {% endfor %}
-      </ul>
+    <p>{% for genre in song.genres.all|slice:":8" %}<a href="{% url 'browse' %}?genre={{ genre.name|urlencode }}" class="pill me-1 mb-1">{{ genre.name }}</a>{% endfor %}</p>
+    <div class="d-flex flex-wrap align-items-center gap-2 mt-4">
+      <button type="button" class="btn btn-success js-play px-4" data-song="{{ song.pk }}" style="min-height: 48px"><i class="fa-solid fa-play"></i> Play</button>
+      <form action="{% url 'toggle_favorite' song.pk %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+        <button type="submit" class="btn {% if song.liked %}btn-success{% else %}btn-outline-light{% endif %}" style="min-height: 48px">
+          <i class="{% if song.liked %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i> {% if song.liked %}Liked{% else %}Like{% endif %}
+        </button>
+      </form>
+      {% if playlists %}
+      <div class="dropdown d-inline">
+        <button class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" type="button" style="min-height: 48px">Add to crate</button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+          {% for playlist in playlists %}
+          <li>
+            <form action="{% url 'playlist_add_song' playlist.pk %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="song_id" value="{{ song.pk }}" />
+              <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+              <button class="dropdown-item" type="submit">{{ playlist.name }}</button>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
     </div>
-    {% endif %}
   </div>
-</div>
+</section>
 
-<h5 class="mt-5">Audio profile</h5>
+<h4 class="mt-5 mb-3">Audio profile</h4>
 <div class="row">
   {% for feature in features %}
-  <div class="col-md-6 mb-2">
-    <div class="d-flex justify-content-between"><span>{{ feature.label }}</span><span class="text-secondary">{{ feature.percent }}%</span></div>
-    <div class="progress" style="height: 6px; background: #2a2a2a" role="progressbar" aria-label="{{ feature.label }}"
+  <div class="col-md-6 mb-3">
+    <div class="d-flex justify-content-between"><span>{{ feature.label }}</span><span class="text-secondary mono">{{ feature.percent }}%</span></div>
+    <div class="progress" style="height: 6px" role="progressbar" aria-label="{{ feature.label }}"
          aria-valuenow="{{ feature.percent }}" aria-valuemin="0" aria-valuemax="100">
       <div class="progress-bar bg-success" style="width: {{ feature.percent }}%"></div>
     </div>
   </div>
   {% endfor %}
 </div>
-<p class="text-secondary mt-3">Popularity {{ song.track_pop }}/100 · Loudness {{ song.loudness|floatformat:1 }} dB</p>
+<p class="text-secondary mt-3 mono small">Popularity {{ song.track_pop }}/100 · Loudness {{ song.loudness|floatformat:1 }} dB</p>
 
 {% if similar %}
-<h5 class="mt-5">More like this</h5>
+<h4 class="mt-5 mb-2">More like this</h4>
 {% for song in similar %}
   {% include "partials/_song_row.html" %}
 {% endfor %}

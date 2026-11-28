@@ -194,7 +194,7 @@ def test_unknown_token_404_and_sharing_requires_login(client, playlist):
 def test_empty_shared_playlist_renders(logged_in, client, playlist):
     share(logged_in, playlist, 'enable')
     playlist.refresh_from_db()
-    assert b'This playlist is empty' in type(client)().get(reverse('shared_playlist', args=[playlist.share_token])).content
+    assert b'This crate is empty' in type(client)().get(reverse('shared_playlist', args=[playlist.share_token])).content
 
 
 # --- Pagination --------------------------------------------------------------------------

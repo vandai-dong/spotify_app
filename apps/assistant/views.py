@@ -48,7 +48,8 @@ def get_openai_answer(request):
     return JsonResponse({
         'completion': result.reply,
         'songs': [
-            {'id': s.pk, 'title': s.display_title, 'artist': s.artist_names, 'url': f'/songs/{s.pk}', 'liked': s.liked}
+            {'id': s.pk, 'title': s.display_title, 'artist': s.artist_names, 'image': s.cover_url,
+             'url': f'/songs/{s.pk}', 'liked': s.liked}
             for s in songs
         ],
         'playlists': [{'id': p.pk, 'name': p.name} for p in user_playlists(request.user)] if songs else [],

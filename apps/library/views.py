@@ -22,11 +22,12 @@ def attach_covers(playlists):
     """Set `playlist.cover_urls` (up to 4 image URLs) on each playlist using a single query."""
     playlists = list(playlists)
     covers = defaultdict(list)
-    entries = PlaylistSong.objects.filter(playlist__in=playlists).select_related('song')
+    entries = PlaylistSong.objects.filter(playlist__in=playlists).select_related('song', 'song__album')
     for entry in entries:
         urls = covers[entry.playlist_id]
-        if entry.song.song_img_url and len(urls) < COVER_TILES and entry.song.song_img_url not in urls:
-            urls.append(entry.song.song_img_url)
+        url = entry.song.cover_url
+        if url and len(urls) < COVER_TILES and url not in urls:
+            urls.append(url)
     for playlist in playlists:
         playlist.cover_urls = covers.get(playlist.pk, [])
     return playlists
@@ -118,7 +119,7 @@ def playlist_create(request):
 @login_required
 def playlist_detail(request, playlist_id):
     playlist = get_object_or_404(Playlist, pk=playlist_id, user=request.user)
-    entries = list(playlist.playlist_songs.select_related('song'))
+    entries = list(playlist.playlist_songs.select_related('song', 'song__album'))
     attach_covers([playlist])
     return render(request, 'library/playlist_detail.html', {
         'playlist': playlist,
@@ -204,7 +205,7 @@ def playlist_share(request, playlist_id):
 def shared_playlist(request, token):
     """Public, read-only view. Exposes only the playlist, its songs and the owner's display name."""
     playlist = get_object_or_404(Playlist.objects.select_related('user'), share_token=token)
-    entries = list(playlist.playlist_songs.select_related('song'))
+    entries = list(playlist.playlist_songs.select_related('song', 'song__album'))
     attach_covers([playlist])
     return render(request, 'library/shared_playlist.html', {
         'playlist': playlist,

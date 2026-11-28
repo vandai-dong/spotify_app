@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from apps.library.models import FollowedArtist
 
 from .helpers import mark_liked, paginate, user_playlists
-from .models import Artist, Genre, Song
+from .models import Album, Artist, Genre, Song
 from .services import recommend
 from .services.moods import MOODS, get_mood
 
@@ -72,7 +72,7 @@ def _format_duration(ms):
 
 @login_required
 def song_detail(request, song_id):
-    song = get_object_or_404(Song.objects.select_related('primary_artist').prefetch_related('genres'), pk=song_id)
+    song = get_object_or_404(Song.objects.select_related('primary_artist', 'album').prefetch_related('genres'), pk=song_id)
     features = [
         {'label': label, 'percent': round(max(0.0, min(1.0, getattr(song, field))) * 100)}
         for field, label in AUDIO_FEATURES
@@ -93,6 +93,7 @@ def artist_detail(request, artist_id):
     is_following = FollowedArtist.objects.filter(user=request.user, artist=artist).exists()
     return render(request, 'catalog/artist_detail.html', {
         'artist': artist,
+        'albums': artist.albums.all(),
         'is_following': is_following,
         'songs': mark_liked(request.user, songs),
         'playlists': user_playlists(request.user),
@@ -153,5 +154,20 @@ def charts(request):
         'top_artists': Artist.objects.all()[:CHART_ARTISTS],
         'page_obj': page_obj,
         'querystring': querystring,
+        'playlists': user_playlists(request.user),
+    })
+
+
+@login_required
+def album_detail(request, album_id):
+    album = get_object_or_404(Album.objects.select_related('primary_artist'), uri=album_id)
+    songs = list(mark_liked(request.user, album.songs.order_by('-track_pop', 'track_name')))
+    # Presentation only: the album is shown as a record, split into Side A and Side B.
+    half = (len(songs) + 1) // 2
+    return render(request, 'catalog/album_detail.html', {
+        'album': album,
+        'songs': songs,
+        'side_a': songs[:half],
+        'side_b': songs[half:],
         'playlists': user_playlists(request.user),
     })

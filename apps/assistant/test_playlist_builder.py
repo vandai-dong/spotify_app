@@ -208,7 +208,7 @@ def test_rate_limited_separately_from_chat(logged_in, catalog, no_llm, settings)
 
 def test_chatbot_page_has_the_playlist_form(logged_in):
     body = logged_in.get(reverse('chatbot')).content
-    assert reverse(URL).encode() in body and b'Build a playlist' in body
+    assert reverse(URL).encode() in body and b'Build a crate' in body
 
 
 # --- LLM path ---------------------------------------------------------------------------------------------------

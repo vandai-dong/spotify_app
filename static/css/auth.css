@@ -1,0 +1,35 @@
+/* Spindle theme for the standalone pages (login, signup, password reset).
+   Loaded AFTER login.css / signup.css / signup_form.css so it overrides their colours. */
+body { background: var(--sp-bg); color: var(--sp-text); font-family: var(--sp-font-body); margin: 0; }
+#main-container {
+    background: linear-gradient(160deg, #2a1f18, #1b1410); border: 1px solid #33271f; border-radius: 24px;
+    width: min(520px, 92%); height: auto; margin: 6vh auto; padding: 40px 32px; box-sizing: border-box;
+}
+#logo { width: 56px; height: 56px; border-radius: 50%; margin-bottom: 8px; }
+h1, h2, h3 { font-family: var(--sp-font-display); font-weight: 500; letter-spacing: -0.01em; text-align: center; }
+hr.solid { border-top: 1px solid var(--sp-border); opacity: 1; width: 100%; }
+a { color: var(--sp-text); }
+a:hover { color: var(--sp-focus); }
+.text-white-50 { color: var(--sp-muted) !important; }
+
+input[type="text"], input[type="password"], input[type="email"], input[type="date"], select, textarea {
+    background-color: var(--sp-input) !important; color: var(--sp-text) !important;
+    border: 1px solid var(--sp-border) !important; border-radius: 10px; min-height: 44px; font: inherit;
+}
+input[type="text"], input[type="password"], input[type="email"], input[type="date"] { width: 100%; min-width: 0 !important; max-width: none !important; }
+input::placeholder { color: var(--sp-muted); }
+input[type="text"]:hover, input[type="password"]:hover { border-color: var(--sp-muted) !important; }
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="date"]:focus, select:focus {
+    outline: 2px solid var(--sp-focus); outline-offset: 2px; border: 1px solid var(--sp-focus) !important;
+}
+input[type="submit"], #main-container button {
+    background-color: var(--sp-accent) !important; color: var(--sp-accent-ink) !important; border: 0; border-radius: 999px;
+    min-height: 48px; padding: 0 24px; font-weight: 700; width: 100%; max-width: none !important; min-width: 0 !important;
+}
+input[type="submit"]:hover, #main-container button:hover { background-color: #f0773f !important; transform: none; }
+.progress { background: var(--sp-border); }
+.progress-bar.bg-success { background-color: var(--sp-accent) !important; }
+.alert { border-radius: 12px; }
+.required { color: #ff8a80; }
+form { width: 100%; }
+@media (max-width: 800px) { #main-container { width: 92%; margin: 4vh auto; padding: 28px 20px; } }

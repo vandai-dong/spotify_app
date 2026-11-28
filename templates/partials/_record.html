@@ -1,0 +1,11 @@
+{# Vinyl record with an orange centre label. Optional: side ("A"), title, spinning (bool), cover (img id slot not used here) #}
+<div class="record{% if spinning %} is-spinning{% endif %}" aria-hidden="true">
+  <div class="record-disc">
+    <div class="record-label">
+      <small>Side {{ side|default:"A" }}</small>
+      {% if title %}<b>{{ title|truncatechars:22 }}</b>{% endif %}
+      <i></i>
+    </div>
+  </div>
+  <div class="record-sheen"></div>
+</div>

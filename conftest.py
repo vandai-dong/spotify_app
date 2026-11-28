@@ -2,7 +2,7 @@ import pytest
 from django.core.cache import cache
 
 from apps.accounts.models import User
-from apps.catalog.models import Artist, Song
+from apps.catalog.models import Album, Artist, Song
 
 
 @pytest.fixture(autouse=True)
@@ -38,6 +38,12 @@ def make_song(n=1, **overrides):
     )
     data.update(overrides)
     return Song.objects.create(**data)
+
+
+def make_album(n=1, **overrides):
+    data = dict(name=f'Album {n}', uri=f'alb{n}')
+    data.update(overrides)
+    return Album.objects.create(**data)
 
 
 @pytest.fixture

@@ -1,14 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Search - Spotify{% endblock %}
+{% load covers %}
+{% block title %}Search - Spindle{% endblock %}
 {% block content %}
-<br />
 {% if not query %}
-  <h4>Search</h4>
+  <h1 class="mt-2" style="font-weight: 500">Search</h1>
   <p class="text-secondary">Type a song or artist in the search bar above.</p>
 {% else %}
-  <h4>Results for “{{ query }}”</h4>
+  <div class="eyebrow mt-2">Results</div>
+  <h1 style="font-weight: 500">“{{ query }}”</h1>
 
-  <h5 class="mt-4">Songs{% if page_obj.paginator.count %} <span class="text-secondary small">({{ page_obj.paginator.count }})</span>{% endif %}</h5>
+  <h4 class="mt-4">Songs{% if page_obj.paginator.count %} <span class="text-secondary small">({{ page_obj.paginator.count }})</span>{% endif %}</h4>
   {% for song in page_obj %}
     {% include "partials/_song_row.html" %}
   {% empty %}
@@ -16,10 +17,10 @@
   {% endfor %}
   {% include "partials/_pagination.html" %}
 
-  <h5 class="mt-4">Artists</h5>
+  <h4 class="mt-4">Artists</h4>
   <ul class="list-unstyled">
     {% for artist in artists %}
-    <li class="py-1"><a href="{% url 'artist_detail' artist.uri %}">{{ artist.artist }}</a> <span class="text-secondary">· {{ artist.num_of_followers|floatformat:"0g" }} followers</span></li>
+    <li class="py-1">{% cover artist shape='circle' size=32 alt="" css='me-2 align-middle' %}<a href="{% url 'artist_detail' artist.uri %}">{{ artist.artist }}</a> <span class="text-secondary">· {{ artist.num_of_followers|floatformat:"0g" }} followers</span></li>
     {% empty %}
     <li class="text-secondary">No artists found.</li>
     {% endfor %}

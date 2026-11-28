@@ -31,7 +31,7 @@ def _song_payload(song):
         'id': song.pk,
         'title': song.display_title,
         'artist': song.artist_names,
-        'image': song.song_img_url,
+        'image': song.cover_url,
         'url': f'/songs/{song.pk}',
         'duration_ms': song.duration_ms,
     }
@@ -40,7 +40,7 @@ def _song_payload(song):
 def _state_response(request, state):
     song = None
     if state['queue'] and 0 <= state['index'] < len(state['queue']):
-        song = Song.objects.filter(pk=state['queue'][state['index']]).first()
+        song = Song.objects.select_related('album').filter(pk=state['queue'][state['index']]).first()
     return JsonResponse({
         'song': _song_payload(song) if song else None,
         'playing': state['playing'] and song is not None,
