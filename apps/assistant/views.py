@@ -7,7 +7,9 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
-from . import services
+from apps.catalog.helpers import mark_liked, user_playlists
+
+from . import chat, services
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +37,18 @@ def get_openai_answer(request):
         return JsonResponse({'error': 'Too many requests. Please wait a minute.'}, status=429)
 
     try:
-        answer = services.ask(prompt)
+        result = chat.chat(request.user, prompt, request.POST.get('history', ''))
     except services.AssistantUnavailable:
         return JsonResponse({'error': 'The assistant is not configured.'}, status=503)
     except Exception:
         logger.exception('OpenAI request failed')
         return JsonResponse({'error': 'The assistant could not answer right now.'}, status=502)
-    return JsonResponse({'completion': answer})
+    songs = mark_liked(request.user, result.songs)
+    return JsonResponse({
+        'completion': result.reply,
+        'songs': [
+            {'id': s.pk, 'title': s.display_title, 'artist': s.artist_names, 'url': f'/songs/{s.pk}', 'liked': s.liked}
+            for s in songs
+        ],
+        'playlists': [{'id': p.pk, 'name': p.name} for p in user_playlists(request.user)] if songs else [],
+    })

@@ -158,6 +158,8 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 OPENAI_MODEL = os.getenv('OPENAI_MODEL', 'gpt-4o-mini')
 CHATBOT_MAX_PROMPT_CHARS = 1000
 CHATBOT_RATE_LIMIT_PER_MINUTE = 10
+CHATBOT_HISTORY_TURNS = 6  # previous messages sent to the model for context
+CHATBOT_CANDIDATES = 15  # catalog songs offered to the model per question
 
 # Spotify Web API (only used by the `fetch_images` management command)
 SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID', '')
