@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ song.display_title }} - Spotify{% endblock %}
+{% block content %}
+<div class="row mt-4 align-items-center">
+  <div class="col-md-3">
+    <img src="{% if song.song_img_url %}{{ song.song_img_url }}{% else %}{% static 'img/placeholder.svg' %}{% endif %}"
+         alt="{{ song.track_name }}" class="img-fluid rounded" />
+  </div>
+  <div class="col-md-9">
+    <span class="text-secondary">Song</span>
+    <h1>{{ song.track_name }}</h1>
+    <p>
+      {% if song.primary_artist %}<a href="{% url 'artist_detail' song.primary_artist.uri %}">{{ song.artist_names }}</a>
+      {% else %}{{ song.artist_names }}{% endif %}
+      <span class="text-secondary">· {{ duration }} · {{ song.get_mode_display }} · {{ song.tempo|floatformat:0 }} BPM</span>
+    </p>
+    <p>{% for genre in song.genres.all|slice:":8" %}<span class="pill me-1">{{ genre.name }}</span>{% endfor %}</p>
+    <form action="{% url 'toggle_favorite' song.pk %}" method="post" class="d-inline">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+      <button type="submit" class="btn btn-sm {% if song.liked %}btn-success{% else %}btn-outline-light{% endif %}">
+        <i class="{% if song.liked %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i> {% if song.liked %}Liked{% else %}Like{% endif %}
+      </button>
+    </form>
+    {% if playlists %}
+    <div class="dropdown d-inline">
+      <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" type="button">Add to playlist</button>
+      <ul class="dropdown-menu dropdown-menu-dark">
+        {% for playlist in playlists %}
+        <li>
+          <form action="{% url 'playlist_add_song' playlist.pk %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="song_id" value="{{ song.pk }}" />
+            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+            <button class="dropdown-item" type="submit">{{ playlist.name }}</button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<h5 class="mt-5">Audio profile</h5>
+<div class="row">
+  {% for feature in features %}
+  <div class="col-md-6 mb-2">
+    <div class="d-flex justify-content-between"><span>{{ feature.label }}</span><span class="text-secondary">{{ feature.percent }}%</span></div>
+    <div class="progress" style="height: 6px; background: #2a2a2a" role="progressbar" aria-label="{{ feature.label }}"
+         aria-valuenow="{{ feature.percent }}" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-bar bg-success" style="width: {{ feature.percent }}%"></div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<p class="text-secondary mt-3">Popularity {{ song.track_pop }}/100 · Loudness {{ song.loudness|floatformat:1 }} dB</p>
+{% endblock %}

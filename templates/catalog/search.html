@@ -18,7 +18,7 @@
   <h5 class="mt-4">Artists</h5>
   <ul class="list-unstyled">
     {% for artist in artists %}
-    <li class="py-1">{{ artist.artist }} <span class="text-secondary">· {{ artist.num_of_followers|floatformat:"0g" }} followers</span></li>
+    <li class="py-1"><a href="{% url 'artist_detail' artist.uri %}">{{ artist.artist }}</a> <span class="text-secondary">· {{ artist.num_of_followers|floatformat:"0g" }} followers</span></li>
     {% empty %}
     <li class="text-secondary">No artists found.</li>
     {% endfor %}

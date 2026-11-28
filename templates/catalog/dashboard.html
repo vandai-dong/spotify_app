@@ -5,11 +5,11 @@
 <h4>Top Artists</h4>
 <div class="scroll-container p-2">
   {% for artist in top_artists %}
-  <div class="p-3 media-card text-center">
+  <a href="{% url 'artist_detail' artist.uri %}" class="p-3 media-card text-center text-white">
     <img src="{% if artist.image_url %}{{ artist.image_url }}{% else %}{% static 'img/placeholder.svg' %}{% endif %}"
          alt="{{ artist.artist }}" class="rounded-circle" />
     <div class="media-title">{{ artist.artist }}</div>
-  </div>
+  </a>
   {% empty %}
   <p class="text-secondary p-3">No artists yet. Run <code>python manage.py import_artists</code>.</p>
   {% endfor %}
@@ -19,11 +19,11 @@
 <h4>Top Songs</h4>
 <div class="scroll-container p-2">
   {% for song in top_songs %}
-  <div class="p-3 media-card text-center">
+  <a href="{% url 'song_detail' song.pk %}" class="p-3 media-card text-center text-white">
     <img src="{% if song.song_img_url %}{{ song.song_img_url }}{% else %}{% static 'img/placeholder.svg' %}{% endif %}"
          alt="{{ song.track_name }}" class="rounded-circle" />
     <div class="media-title">{{ song.display_title }}</div>
-  </div>
+  </a>
   {% empty %}
   <p class="text-secondary p-3">No songs yet. Run <code>python manage.py import_songs</code>.</p>
   {% endfor %}
